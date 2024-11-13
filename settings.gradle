@@ -1,0 +1,6 @@
+rootProject.name = 'onboarding-kit'
+include 'user-service'
+include 'article-service'
+include 'checklist-service'
+include 'common'
+

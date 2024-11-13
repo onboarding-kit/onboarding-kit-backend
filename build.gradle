@@ -1,0 +1,58 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.11'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+repositories {
+	mavenCentral()
+}
+
+subprojects {
+	group = 'com.example.onboarding'
+	version = '0.0.1-SNAPSHOT'
+	sourceCompatibility = '17'
+
+	apply plugin: 'java'
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
+	apply plugin: 'java-test-fixtures'
+
+	repositories {
+		mavenCentral()
+	}
+
+	ext {
+		set('springCloudVersion', "2023.0.0")
+	}
+
+	dependencyManagement {
+		imports {
+			mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+		}
+	}
+
+	bootJar { enabled = false }
+	jar { enabled = true }
+}
+
+project(':user-service') {
+	dependencies {
+		implementation project(':common')
+		implementation(testFixtures(project(":common")))
+	}
+}
+
+project(':article-service') {
+	dependencies {
+		implementation project(':common')
+		implementation(testFixtures(project(":common")))
+	}
+}
+
+project(':checklist-service') {
+	dependencies {
+		implementation project(':common')
+		implementation(testFixtures(project(":common")))
+	}
+}
