@@ -1,4 +1,4 @@
-package com.example.onboarding.global.response;
+package com.example.common.global.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AccessLevel;

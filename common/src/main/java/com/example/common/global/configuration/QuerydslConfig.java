@@ -1,4 +1,4 @@
-package com.example.onboarding.global.configuration;
+package com.example.common.global.configuration;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

@@ -1,4 +1,4 @@
-package com.example.onboarding.global.exception;
+package com.example.common.global.exception;
 
 import lombok.NoArgsConstructor;
 

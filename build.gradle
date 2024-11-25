@@ -1,45 +1,67 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.2.11'
-	id 'io.spring.dependency-management' version '1.1.6'
+	id 'org.springframework.boot' version '3.3.4'
+	id 'io.spring.dependency-management' version '1.1.4'
 }
 
-repositories {
-	mavenCentral()
-}
-
-subprojects {
+allprojects {
 	group = 'com.example.onboarding'
 	version = '0.0.1-SNAPSHOT'
 	sourceCompatibility = '17'
 
+	repositories {
+		mavenCentral()
+		maven { url 'https://repo.spring.io/milestone' }
+		maven { url 'https://repo.spring.io/snapshot' }
+	}
+}
+
+subprojects {
 	apply plugin: 'java'
 	apply plugin: 'org.springframework.boot'
 	apply plugin: 'io.spring.dependency-management'
 	apply plugin: 'java-test-fixtures'
 
-	repositories {
-		mavenCentral()
+	dependencies {
+		// Spring Boot 기본 의존성
+		implementation 'org.springframework.boot:spring-boot-autoconfigure'
+		implementation 'org.springframework.boot:spring-boot-starter-logging'
+
+		// 테스트 의존성
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		testImplementation 'org.springframework.security:spring-security-test'
+
+		// Lombok
+		compileOnly 'org.projectlombok:lombok'
+		annotationProcessor 'org.projectlombok:lombok'
+		testAnnotationProcessor 'org.projectlombok:lombok'
+		testCompileOnly 'org.projectlombok:lombok'
+
+		// Validation
+		implementation 'org.springframework.boot:spring-boot-starter-validation'
 	}
 
-	ext {
-		set('springCloudVersion', "2023.0.0")
+	tasks.named('bootJar') {
+		enabled = false
 	}
 
-	dependencyManagement {
-		imports {
-			mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-		}
+	tasks.named('jar') {
+		enabled = true
 	}
 
-	bootJar { enabled = false }
-	jar { enabled = true }
+	tasks.named('test') {
+		useJUnitPlatform()
+	}
 }
 
 project(':user-service') {
 	dependencies {
 		implementation project(':common')
 		implementation(testFixtures(project(":common")))
+	}
+
+	tasks.named('bootJar') {
+		mainClass.set("com.example.onboarding.user.UserServiceApplication")
 	}
 }
 
@@ -48,6 +70,10 @@ project(':article-service') {
 		implementation project(':common')
 		implementation(testFixtures(project(":common")))
 	}
+
+	tasks.named('bootJar') {
+		mainClass.set("com.example.onboarding.article.ArticleServiceApplication")
+	}
 }
 
 project(':checklist-service') {
@@ -55,4 +81,17 @@ project(':checklist-service') {
 		implementation project(':common')
 		implementation(testFixtures(project(":common")))
 	}
+
+	tasks.named('bootJar') {
+		mainClass.set("com.example.onboarding.checklist.ChecklistServiceApplication")
+	}
+}
+
+dependencies {
+	// Spring Boot 필수 의존성 추가 (루트에서 실행 가능하도록)
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-logging'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
 }

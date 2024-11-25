@@ -1,4 +1,4 @@
-package com.example.onboarding.global.configuration;
+package com.example.common.global.configuration;
 
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;

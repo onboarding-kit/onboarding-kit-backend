@@ -1,4 +1,4 @@
-package com.example.onboarding.global;
+package com.example.common.global;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;

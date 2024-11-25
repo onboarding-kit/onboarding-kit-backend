@@ -1,6 +1,6 @@
-package com.example.onboarding;
+package com.example.checklistservice;
 
-public class Main {
+public class ChecklistServiceApplication {
     public static void main(String[] args) {
         System.out.println("Hello world!");
     }

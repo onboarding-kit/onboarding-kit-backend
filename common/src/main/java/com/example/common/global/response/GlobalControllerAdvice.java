@@ -1,6 +1,6 @@
-package com.example.onboarding.global.response;
+package com.example.common.global.response;
 
-import com.example.onboarding.global.exception.BaseException;
+import com.example.common.global.exception.BaseException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;

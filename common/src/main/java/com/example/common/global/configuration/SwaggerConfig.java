@@ -1,4 +1,4 @@
-package com.example.onboarding.global.configuration;
+package com.example.common.global.configuration;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
