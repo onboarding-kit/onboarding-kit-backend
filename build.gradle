@@ -61,7 +61,7 @@ project(':user-service') {
 	}
 
 	tasks.named('bootJar') {
-		mainClass.set("com.example.onboarding.user.UserServiceApplication")
+		mainClass.set("com.example.userservice.UserServiceApplication")
 	}
 }
 
@@ -72,7 +72,7 @@ project(':article-service') {
 	}
 
 	tasks.named('bootJar') {
-		mainClass.set("com.example.onboarding.article.ArticleServiceApplication")
+		mainClass.set("com.example.articleservice.ArticleServiceApplication")
 	}
 }
 
@@ -83,7 +83,18 @@ project(':checklist-service') {
 	}
 
 	tasks.named('bootJar') {
-		mainClass.set("com.example.onboarding.checklist.ChecklistServiceApplication")
+		mainClass.set("com.example.checklistservice.ChecklistServiceApplication")
+	}
+}
+
+project(':common') {
+	dependencies {
+		implementation project(':user-service')
+		implementation(testFixtures(project(":user-service")))
+	}
+
+	tasks.named('bootJar') {
+		mainClass.set("com.example.common.CommonServiceApplication")
 	}
 }
 
