@@ -7,12 +7,15 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
     //유저 관련
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, ExceptionMessage.USER_NOT_FOUND),
+    USER_NOT_REGISTERED(HttpStatus.BAD_REQUEST, ExceptionMessage.USER_NOT_REGISTERED),
+
     //아티클 관련
 
     //체크리스트 관련
 
-    //S3 관련
-    FAILED_CONVERT_FILE(HttpStatus.BAD_REQUEST, ExceptionMessage.S3_BAD_REQUEST);
+    //토큰 관련
+    TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, ExceptionMessage.TOKEN_NOT_FOUND),
+
 
     private final HttpStatus status;
     private final String message;
