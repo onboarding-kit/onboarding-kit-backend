@@ -8,8 +8,11 @@ public class ExceptionMessage {
     public static final String USER_NOT_FOUND = "해당 유저가 존재 하지 않습니다.";
     public static final String USER_NOT_REGISTERED = "등록된 회원이 아닙니다.";
 
-    //S3 관련
-    public static final String S3_BAD_REQUEST = "S3 잘못된 요청입니다";
+    //폴더 관련
+    public static final String FOLDER_NOT_FOUND = "해당 폴더가 존재 하지 않습니다.";
+
+    //체크리스트 관련
+    public static final String CHECKLIST_NOT_FOUND = "해당 체크리스트가 존재 하지 않습니다.";
 
     //토큰 관련
     public static final String TOKEN_VERIFICATION = "해당 토큰이 유효하지 않습니다.";

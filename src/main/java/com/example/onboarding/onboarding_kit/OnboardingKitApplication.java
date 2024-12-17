@@ -6,6 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @ComponentScan(basePackages = {"com.example.onboarding"})
 @SpringBootApplication
+@EnableJpaAuditing
 public class OnboardingKitApplication {
 
 	public static void main(String[] args) {

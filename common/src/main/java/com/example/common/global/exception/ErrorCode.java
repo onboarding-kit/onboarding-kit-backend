@@ -12,9 +12,13 @@ public enum ErrorCode {
     //아티클 관련
 
     //체크리스트 관련
+    CHECKLIST_NOT_FOUND(HttpStatus.NOT_FOUND, ExceptionMessage.CHECKLIST_NOT_FOUND),
+
+    //폴더 관련
+    FOLDER_NOT_FOUND(HttpStatus.NOT_FOUND, ExceptionMessage.FOLDER_NOT_FOUND),
 
     //토큰 관련
-    TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, ExceptionMessage.TOKEN_NOT_FOUND),
+    TOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, ExceptionMessage.TOKEN_NOT_FOUND);
 
 
     private final HttpStatus status;
