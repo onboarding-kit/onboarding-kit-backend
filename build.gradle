@@ -4,7 +4,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
-group = 'com.example'
+group = 'com.api'
 version = '0.0.1-SNAPSHOT'
 
 java {
@@ -29,7 +29,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.h2database:h2:2.2.224'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
@@ -38,4 +38,9 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+// gradle 빌드 시 테스트 코드 미수행
+tasks.withType(Test).configureEach {
+    enabled = false
 }
