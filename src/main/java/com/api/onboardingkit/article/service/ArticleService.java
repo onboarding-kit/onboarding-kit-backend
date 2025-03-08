@@ -2,10 +2,11 @@ package com.api.onboardingkit.article.service;
 
 import com.api.onboardingkit.article.repository.ArticleRepository;
 import com.api.onboardingkit.article.repository.HashtagRepository;
-import com.api.onboardingkit.article.response.ArticleRequestDTO;
-import com.api.onboardingkit.article.response.ArticleResponseDTO;
+import com.api.onboardingkit.article.dto.ArticleRequestDTO;
+import com.api.onboardingkit.article.dto.ArticleResponseDTO;
 import com.api.onboardingkit.article.model.Article;
 import com.api.onboardingkit.article.model.Hashtag;
+import com.api.onboardingkit.article.dto.ArticleSearchDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,18 +22,16 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
     private final HashtagRepository hashtagRepository;
 
-    public List<ArticleResponseDTO> fetchArticles(
-            String category,
-            String subcategory,
-            String title,
-            String sortBy
-    ) {
-        List<Article> articles = (category == null && subcategory == null && title == null)
-                ? articleRepository.findAllArticles()
-                : articleRepository.findArticles(category, subcategory, title, sortBy);
+    public List<ArticleResponseDTO> fetchArticles(ArticleSearchDTO searchDTO) {
+        List<Article> articles = articleRepository.findArticles(
+                searchDTO.getCategory(),
+                searchDTO.getSubcategory(),
+                searchDTO.getTitle(),
+                searchDTO.getSortBy()
+        );
 
         return articles.stream()
-                .map(article -> { // todo. 아티클에 맞춰서 해시태그 추가
+                .map(article -> {
                     List<String> hashtags = hashtagRepository.findHashtagsByArticleId(article.getId());
                     return ArticleResponseDTO.fromEntity(article, hashtags);
                 })

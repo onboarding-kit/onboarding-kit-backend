@@ -1,7 +1,8 @@
 package com.api.onboardingkit.article.controller;
 
-import com.api.onboardingkit.article.response.ArticleRequestDTO;
-import com.api.onboardingkit.article.response.ArticleResponseDTO;
+import com.api.onboardingkit.article.dto.ArticleRequestDTO;
+import com.api.onboardingkit.article.dto.ArticleResponseDTO;
+import com.api.onboardingkit.article.dto.ArticleSearchDTO;
 import com.api.onboardingkit.article.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,13 +17,8 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @GetMapping
-    public ResponseEntity<List<ArticleResponseDTO>> fetchArticles(
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) String subcategory,
-            @RequestParam(required = false) String title, // todo. 제목 검색도 추가
-            @RequestParam(defaultValue = "latest") String sortBy
-    ) {
-        List<ArticleResponseDTO> articles = articleService.fetchArticles(category, subcategory, title, sortBy);
+    public ResponseEntity<List<ArticleResponseDTO>> fetchArticles(ArticleSearchDTO searchDTO) { // todo. searchdto 추가
+        List<ArticleResponseDTO> articles = articleService.fetchArticles(searchDTO);
         return ResponseEntity.ok(articles);
     }
 
