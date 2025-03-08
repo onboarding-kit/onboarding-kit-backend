@@ -10,12 +10,16 @@ import java.util.List;
 
 @Repository
 public interface ArticleRepository extends JpaRepository<Article, Long> {
-    // 조건에 맞는 아티클 반환
+
+    @Query("SELECT a FROM Article a ORDER BY a.postDate DESC")
+    List<Article> findAllArticles();
+
     @Query("""
         SELECT a 
         FROM Article a 
         WHERE (:category IS NULL OR a.category = :category) 
           AND (:subcategory IS NULL OR a.subcategory = :subcategory) 
+          AND (:title IS NULL OR a.title = :title) 
         ORDER BY 
           CASE 
             WHEN :sortBy = 'latest' THEN a.postDate 
@@ -29,29 +33,8 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
     List<Article> findArticles(
             @Param("category") String category,
             @Param("subcategory") String subcategory,
+            @Param("title") String title,
             @Param("sortBy") String sortBy
     );
 
-    // 아티클 검색
-    @Query("""
-    SELECT DISTINCT a, 
-           CASE WHEN :sortBy = 'latest' THEN a.postDate ELSE NULL END AS sortPostDate,
-           CASE WHEN :sortBy = 'popular' THEN a.views ELSE 0 END AS sortViews
-    FROM Article a
-    LEFT JOIN a.hashtags h
-    WHERE (:category IS NULL OR a.category = :category)
-      AND (:subcategory IS NULL OR a.subcategory = :subcategory)
-      AND (:searchTerm IS NULL OR a.title LIKE %:searchTerm% OR h.content LIKE %:searchTerm%)
-    ORDER BY sortPostDate DESC, sortViews DESC
-    """)
-    List<Article> searchArticles(
-            @Param("category") String category,
-            @Param("subcategory") String subcategory,
-            @Param("searchTerm") String searchTerm,
-            @Param("sortBy") String sortBy
-    );
-
-    // 모든 아티클 반환
-    @Query("SELECT a FROM Article a ORDER BY a.postDate DESC")
-    List<Article> findAllArticles();
 }

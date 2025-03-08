@@ -21,68 +21,70 @@ public class ArticleService {
     private final ArticleRepository articleRepository;
     private final HashtagRepository hashtagRepository;
 
-    public List<ArticleResponseDTO> fetchArticles(String category, String subcategory, String sortBy) {
-        List<Article> articles;
-
-        if (category == null && subcategory == null) {
-            // 조건이 없으면 모든 아티클 조회
-            articles = articleRepository.findAllArticles();
-        } else {
-            // 조건이 있으면 조건에 맞는 아티클 조회
-            articles = articleRepository.findArticles(category, subcategory, sortBy);
-        }
+    public List<ArticleResponseDTO> fetchArticles(
+            String category,
+            String subcategory,
+            String title,
+            String sortBy
+    ) {
+        List<Article> articles = (category == null && subcategory == null && title == null)
+                ? articleRepository.findAllArticles()
+                : articleRepository.findArticles(category, subcategory, title, sortBy);
 
         return articles.stream()
-                .map(ArticleResponseDTO::new)
+                .map(article -> { // todo. 아티클에 맞춰서 해시태그 추가
+                    List<String> hashtags = hashtagRepository.findHashtagsByArticleId(article.getId());
+                    return ArticleResponseDTO.fromEntity(article, hashtags);
+                })
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public ArticleResponseDTO createArticle(ArticleRequestDTO requestDTO) {
+    public ArticleResponseDTO createArticle(
+            ArticleRequestDTO requestDTO
+    ) {
         Article article = Article.builder()
                 .category(requestDTO.getCategory())
                 .subcategory(requestDTO.getSubcategory())
-                .postDate(requestDTO.getPostDate().toLocalDate())
+                .postDate(requestDTO.getPostDate())
                 .source(requestDTO.getSource())
                 .title(requestDTO.getTitle())
                 .summary(requestDTO.getSummary())
                 .thumbnail(requestDTO.getThumbnail())
                 .url(requestDTO.getUrl())
                 .views(0)
-                .createdTime(requestDTO.getPostDate())
+                .createdTime(LocalDateTime.now()) // todo. requestDTO.getPostDate() 받는 부분 등록될때의 시간으로 변경
                 .build();
 
-        return new ArticleResponseDTO(articleRepository.save(article));
-    }
-
-    public List<ArticleResponseDTO> searchArticles(String category, String subcategory, String searchTerm, String sortBy) {
-        List<Article> articles = articleRepository.searchArticles(category, subcategory, searchTerm, sortBy);
-        return articles.stream()
-                .map(ArticleResponseDTO::new)
-                .collect(Collectors.toList());
+        return ArticleResponseDTO.fromEntity(articleRepository.save(article), List.of());
     }
 
     @Transactional
-    public String incrementViewsAndGetUrl(Long id) {
+    public String incrementViewsAndGetUrl(
+            Long id
+    ) {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 아티클이 존재하지 않습니다: " + id));
-        article.setViews(article.getViews() + 1);
-        articleRepository.save(article);
+
+        article.incrementViews(); // todo. 별도 메서드 활용
         return article.getUrl();
     }
 
-    public void addHashtagsToArticle(Long articleId, List<String> hashtags) {
-        // Article 조회
+    @Transactional
+    public void addHashtagToArticle(
+            Long articleId,
+            String hashtagContent
+    ) {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 아티클이 존재하지 않습니다: " + articleId));
 
-        // 해시태그 저장
-        for (String tag : hashtags) {
-            Hashtag hashtag = new Hashtag();
-            hashtag.setArticle(article); // Article과 연결
-            hashtag.setContent(tag); // 해시태그 내용 설정
-            hashtag.setCreateTime(LocalDateTime.now()); // 생성 시간 설정
-            hashtagRepository.save(hashtag); // 저장
-        }
+        Hashtag hashtag = Hashtag.builder()
+                .articleId(article.getId())
+                .content(hashtagContent)
+                .createTime(LocalDateTime.now())
+                .build();
+
+        hashtagRepository.save(hashtag);
     }
+
 }

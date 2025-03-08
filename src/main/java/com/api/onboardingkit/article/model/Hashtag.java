@@ -1,23 +1,21 @@
 package com.api.onboardingkit.article.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Setter
 @Getter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Hashtag {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "article_id")
-    private Article article;
-
+    private Long articleId; // todo. 연관성 제거
     private String content;
     private LocalDateTime createTime;
 }

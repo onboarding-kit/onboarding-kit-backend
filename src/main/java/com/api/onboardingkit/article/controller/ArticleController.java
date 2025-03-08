@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/articles")
+@RequestMapping("/articles")
 @RequiredArgsConstructor
 public class ArticleController {
     private final ArticleService articleService;
@@ -19,39 +19,38 @@ public class ArticleController {
     public ResponseEntity<List<ArticleResponseDTO>> fetchArticles(
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String subcategory,
-            @RequestParam(defaultValue = "latest") String sortBy) {
-        // 조건이 없는 경우 모든 아티클을 반환
-        List<ArticleResponseDTO> articles = articleService.fetchArticles(category, subcategory, sortBy);
+            @RequestParam(required = false) String title, // todo. 제목 검색도 추가
+            @RequestParam(defaultValue = "latest") String sortBy
+    ) {
+        List<ArticleResponseDTO> articles = articleService.fetchArticles(category, subcategory, title, sortBy);
         return ResponseEntity.ok(articles);
     }
 
     @PostMapping
-    public ResponseEntity<ArticleResponseDTO> createArticle(@RequestBody ArticleRequestDTO requestDTO) {
+    public ResponseEntity<ArticleResponseDTO> createArticle(
+            @RequestBody ArticleRequestDTO requestDTO
+    ) {
         ArticleResponseDTO createdArticle = articleService.createArticle(requestDTO);
         return ResponseEntity.ok(createdArticle);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<ArticleResponseDTO>> searchArticles(
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) String subcategory,
-            @RequestParam(required = false) String searchTerm,
-            @RequestParam(defaultValue = "latest") String sortBy) {
-        List<ArticleResponseDTO> articles = articleService.searchArticles(category, subcategory, searchTerm, sortBy);
-        return ResponseEntity.ok(articles);
-    }
+    // todo. search 제거. 검색용 API를 따로 뺀 이유가 있는지 ?.? 아티클 조회로 통합
 
-    @GetMapping("/{id}/redirect")
-    public ResponseEntity<Void> redirectToSource(@PathVariable Long id) {
+    @GetMapping("/{id}/redirect") // todo. 이친구는 의도가 궁금 단순 페이지 뷰 count +1 인지!
+    public ResponseEntity<Void> redirectToSource(
+            @PathVariable Long id
+    ) {
         String url = articleService.incrementViewsAndGetUrl(id);
         return ResponseEntity.status(302).header("Location", url).build();
     }
 
     @PostMapping("/{id}/hashtags")
-    public ResponseEntity<String> addHashtags(
+    public ResponseEntity<String> addHashtag( // todo. 하나의 해시태그를 저장
             @PathVariable Long id,
-            @RequestBody List<String> hashtags) {
-        articleService.addHashtagsToArticle(id, hashtags);
+            @RequestParam(required = false) String hashtag
+    ) {
+        articleService.addHashtagToArticle(id, hashtag);
         return ResponseEntity.ok("해시태그가 성공적으로 추가되었습니다.");
     }
+
 }
