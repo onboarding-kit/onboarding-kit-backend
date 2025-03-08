@@ -1,6 +1,6 @@
 package com.api.onboardingkit.article.repository;
 
-import com.api.onboardingkit.article.model.Article;
+import com.api.onboardingkit.article.entity.Article;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
