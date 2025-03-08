@@ -32,7 +32,10 @@ public class ArticleService {
 
         return articles.stream()
                 .map(article -> {
-                    List<String> hashtags = hashtagRepository.findHashtagsByArticleId(article.getId());
+                    List<String> hashtags = hashtagRepository.findByArticleId(article.getId())
+                            .stream()
+                            .map(Hashtag::getContent)
+                            .collect(Collectors.toList());
                     return ArticleResponseDTO.fromEntity(article, hashtags);
                 })
                 .collect(Collectors.toList());

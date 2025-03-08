@@ -10,7 +10,5 @@ import java.util.List;
 
 @Repository
 public interface HashtagRepository extends JpaRepository<Hashtag, Long> {
-
-    @Query("SELECT h.content FROM Hashtag h WHERE h.articleId = :articleId")
-    List<String> findHashtagsByArticleId(@Param("articleId") Long articleId);
+    List<Hashtag> findByArticleId(Long articleId);
 }
