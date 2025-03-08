@@ -1,16 +1,24 @@
 spring:
   datasource:
-    url: jdbc:h2:file:C:/Users/1117mg/IdeaProjects/onboarding-kit-backend
+    url: jdbc:h2:file:./data/demo-db;DB_CLOSE_DELAY=-1;AUTO_SERVER=TRUE   # 프로젝트 내부에 H2 DB 저장, 동시 접속 가능
     driver-class-name: org.h2.Driver
     username: sa
     password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
   h2:
     console:
       enabled: true
       path: /h2
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
+  security:
+    user:
+      name: admin
+      password: admin1!
   devtools:
     restart:
       enabled: true
+
+server:
+  port: 8080
