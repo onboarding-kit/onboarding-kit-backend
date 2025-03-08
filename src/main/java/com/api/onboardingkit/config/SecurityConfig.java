@@ -1,4 +1,4 @@
-package com.example.onboardingkitbackend.config;
+package com.api.onboardingkit.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
