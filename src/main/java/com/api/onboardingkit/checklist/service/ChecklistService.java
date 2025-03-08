@@ -8,7 +8,7 @@ import com.api.onboardingkit.checklist.entity.Checklist;
 import com.api.onboardingkit.checklist.entity.ChecklistItem;
 import com.api.onboardingkit.checklist.repository.ChecklistRepository;
 import com.api.onboardingkit.checklist.repository.ChecklistItemRepository;
-import com.api.onboardingkit.config.SecurityUtil;
+import com.api.onboardingkit.config.AbstractService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,23 +19,21 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-public class ChecklistService {
+public class ChecklistService extends AbstractService {
 
     private final ChecklistRepository checklistRepository;
     private final ChecklistItemRepository checklistItemRepository;
 
     public List<ChecklistResponseDTO> getUserChecklists() {
-        Long userNo = SecurityUtil.getCurrentUserNo();
-        return checklistRepository.findByUserNo(userNo).stream()
+        return checklistRepository.findByUserNo(getUserNo()).stream()
                 .map(ChecklistResponseDTO::new)
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public ChecklistResponseDTO createChecklist(ChecklistRequestDTO requestDTO) {
-        Long userNo = SecurityUtil.getCurrentUserNo();
         Checklist checklist = Checklist.builder()
-                .userNo(userNo)
+                .userNo(getUserNo())
                 .title(requestDTO.getTitle())
                 .createdTime(LocalDateTime.now())
                 .updatedTime(LocalDateTime.now())
