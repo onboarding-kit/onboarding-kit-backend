@@ -11,4 +11,7 @@ import java.util.Optional;
 public interface ChecklistItemRepository extends JpaRepository<ChecklistItem, Long> {
     List<ChecklistItem> findByChecklistId(Long checklistId);
     Optional<ChecklistItem> findByChecklistIdAndId(Long checklistId, Long itemId);
+    Integer countByChecklistId(Long checklistId);
+    Integer countByChecklistIdAndCompleted(Long checklistId, boolean completed);
+    List<ChecklistItem> findTop3ByChecklistIdAndCompletedFalseOrderByCreatedTimeDesc(Long checklistId);
 }

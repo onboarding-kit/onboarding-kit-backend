@@ -27,4 +27,6 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
             @Param("sortBy") String sortBy
     );
 
+    List<Article> findTop3ByOrderByViewsDesc();
+    
 }
