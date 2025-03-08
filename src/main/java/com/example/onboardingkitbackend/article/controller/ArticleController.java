@@ -1,5 +1,6 @@
 package com.example.onboardingkitbackend.article.controller;
 
+import com.example.onboardingkitbackend.article.response.ArticleRequestDTO;
 import com.example.onboardingkitbackend.article.response.ArticleResponseDTO;
 import com.example.onboardingkitbackend.article.service.ArticleService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,12 @@ public class ArticleController {
         // 조건이 없는 경우 모든 아티클을 반환
         List<ArticleResponseDTO> articles = articleService.fetchArticles(category, subcategory, sortBy);
         return ResponseEntity.ok(articles);
+    }
+
+    @PostMapping
+    public ResponseEntity<ArticleResponseDTO> createArticle(@RequestBody ArticleRequestDTO requestDTO) {
+        ArticleResponseDTO createdArticle = articleService.createArticle(requestDTO);
+        return ResponseEntity.ok(createdArticle);
     }
 
     @GetMapping("/search")

@@ -4,6 +4,7 @@ import com.example.onboardingkitbackend.article.model.Article;
 import com.example.onboardingkitbackend.article.model.Hashtag;
 import com.example.onboardingkitbackend.article.repository.ArticleRepository;
 import com.example.onboardingkitbackend.article.repository.HashtagRepository;
+import com.example.onboardingkitbackend.article.response.ArticleRequestDTO;
 import com.example.onboardingkitbackend.article.response.ArticleResponseDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class ArticleService {
+
     private final ArticleRepository articleRepository;
     private final HashtagRepository hashtagRepository;
-
 
     public List<ArticleResponseDTO> fetchArticles(String category, String subcategory, String sortBy) {
         List<Article> articles;
@@ -34,6 +35,24 @@ public class ArticleService {
         return articles.stream()
                 .map(ArticleResponseDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public ArticleResponseDTO createArticle(ArticleRequestDTO requestDTO) {
+        Article article = Article.builder()
+                .category(requestDTO.getCategory())
+                .subcategory(requestDTO.getSubcategory())
+                .postDate(requestDTO.getPostDate().toLocalDate())
+                .source(requestDTO.getSource())
+                .title(requestDTO.getTitle())
+                .summary(requestDTO.getSummary())
+                .thumbnail(requestDTO.getThumbnail())
+                .url(requestDTO.getUrl())
+                .views(0)
+                .createdTime(requestDTO.getPostDate())
+                .build();
+
+        return new ArticleResponseDTO(articleRepository.save(article));
     }
 
     public List<ArticleResponseDTO> searchArticles(String category, String subcategory, String searchTerm, String sortBy) {

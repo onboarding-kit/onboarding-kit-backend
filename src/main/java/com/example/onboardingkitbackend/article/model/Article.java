@@ -1,25 +1,29 @@
 package com.example.onboardingkitbackend.article.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Setter
 @Getter
+@Setter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String category;
     private String subcategory;
+
     @Column(name = "post_date")
     private LocalDate postDate;
+
     private LocalDateTime createdTime;
     private String source;
     private String title;
@@ -29,5 +33,6 @@ public class Article {
     private String url;
 
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Hashtag> hashtags = new ArrayList<>();
 }
