@@ -4,7 +4,7 @@ import com.api.onboardingkit.article.repository.ArticleRepository;
 import com.api.onboardingkit.checklist.entity.Checklist;
 import com.api.onboardingkit.checklist.repository.ChecklistItemRepository;
 import com.api.onboardingkit.checklist.repository.ChecklistRepository;
-import com.api.onboardingkit.config.SecurityUtil;
+import com.api.onboardingkit.config.AbstractService;
 import com.api.onboardingkit.main.dto.MainArticleDTO;
 import com.api.onboardingkit.main.dto.MainChecklistItemDTO;
 import com.api.onboardingkit.main.dto.MainStatusChecklistDTO;
@@ -17,15 +17,14 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-public class MainService {
+public class MainService extends AbstractService {
 
     private final ArticleRepository articleRepository;
     private final ChecklistRepository checklistRepository;
     private final ChecklistItemRepository checklistItemRepository;
 
     public List<MainStatusChecklistDTO> getMainChecklistStatus() {
-        Long userNo = SecurityUtil.getCurrentUserNo();
-        return checklistRepository.findByUserNo(userNo).stream()
+        return checklistRepository.findByUserNo(getUserNo()).stream()
                 .map(checklist -> {
                     Integer totalItems = checklistItemRepository.countByChecklistId(checklist.getId());
                     Integer completedItems = checklistItemRepository.countByChecklistIdAndCompleted(checklist.getId(), true);
@@ -37,9 +36,7 @@ public class MainService {
     }
 
     public MainChecklistDTO getMainChecklist() {
-        Long userNo = SecurityUtil.getCurrentUserNo();
-
-        Checklist recentChecklist = checklistRepository.findTopByUserNoOrderByCreatedTimeDesc(userNo)
+        Checklist recentChecklist = checklistRepository.findTopByUserNoOrderByCreatedTimeDesc(getUserNo())
                 .orElseThrow(() -> new IllegalArgumentException("최근 체크리스트가 존재하지 않습니다."));
 
         List<MainChecklistItemDTO> pendingItems = checklistItemRepository
@@ -61,5 +58,4 @@ public class MainService {
                         article.getViews()))
                 .collect(Collectors.toList());
     }
-
 }
