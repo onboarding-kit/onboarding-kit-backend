@@ -1,4 +1,4 @@
-package com.example.onboardingkitbackend.article.model;
+package com.api.onboardingkit.article.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;

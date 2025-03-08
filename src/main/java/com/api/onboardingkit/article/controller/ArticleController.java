@@ -1,8 +1,8 @@
-package com.example.onboardingkitbackend.article.controller;
+package com.api.onboardingkit.article.controller;
 
-import com.example.onboardingkitbackend.article.response.ArticleRequestDTO;
-import com.example.onboardingkitbackend.article.response.ArticleResponseDTO;
-import com.example.onboardingkitbackend.article.service.ArticleService;
+import com.api.onboardingkit.article.response.ArticleRequestDTO;
+import com.api.onboardingkit.article.response.ArticleResponseDTO;
+import com.api.onboardingkit.article.service.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

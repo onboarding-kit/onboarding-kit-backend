@@ -1,4 +1,4 @@
-package com.example.onboardingkitbackend;
+package com.api.onboardingkit;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

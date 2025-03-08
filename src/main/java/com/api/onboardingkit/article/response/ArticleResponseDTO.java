@@ -1,6 +1,6 @@
-package com.example.onboardingkitbackend.article.response;
+package com.api.onboardingkit.article.response;
 
-import com.example.onboardingkitbackend.article.model.Article;
+import com.api.onboardingkit.article.model.Article;
 import lombok.Getter;
 import lombok.Setter;
 

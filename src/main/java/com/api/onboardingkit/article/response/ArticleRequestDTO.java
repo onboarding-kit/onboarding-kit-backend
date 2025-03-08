@@ -1,4 +1,4 @@
-package com.example.onboardingkitbackend.article.response;
+package com.api.onboardingkit.article.response;
 
 import lombok.*;
 

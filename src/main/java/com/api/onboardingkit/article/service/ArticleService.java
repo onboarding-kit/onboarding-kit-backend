@@ -1,11 +1,11 @@
-package com.example.onboardingkitbackend.article.service;
+package com.api.onboardingkit.article.service;
 
-import com.example.onboardingkitbackend.article.model.Article;
-import com.example.onboardingkitbackend.article.model.Hashtag;
-import com.example.onboardingkitbackend.article.repository.ArticleRepository;
-import com.example.onboardingkitbackend.article.repository.HashtagRepository;
-import com.example.onboardingkitbackend.article.response.ArticleRequestDTO;
-import com.example.onboardingkitbackend.article.response.ArticleResponseDTO;
+import com.api.onboardingkit.article.repository.ArticleRepository;
+import com.api.onboardingkit.article.repository.HashtagRepository;
+import com.api.onboardingkit.article.response.ArticleRequestDTO;
+import com.api.onboardingkit.article.response.ArticleResponseDTO;
+import com.api.onboardingkit.article.model.Article;
+import com.api.onboardingkit.article.model.Hashtag;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,6 +1,6 @@
-package com.example.onboardingkitbackend.article.repository;
+package com.api.onboardingkit.article.repository;
 
-import com.example.onboardingkitbackend.article.model.Hashtag;
+import com.api.onboardingkit.article.model.Hashtag;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

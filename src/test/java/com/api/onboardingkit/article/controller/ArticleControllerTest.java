@@ -1,10 +1,9 @@
-package com.example.onboardingkitbackend.article.controller;
+package com.api.onboardingkit.article.controller;
 
-import com.example.onboardingkitbackend.article.model.Article;
-import com.example.onboardingkitbackend.article.model.Hashtag;
-import com.example.onboardingkitbackend.article.response.ArticleResponseDTO;
-import com.example.onboardingkitbackend.article.service.ArticleService;
-import com.example.onboardingkitbackend.config.SecurityConfig;
+import com.api.onboardingkit.article.model.Article;
+import com.api.onboardingkit.article.response.ArticleResponseDTO;
+import com.api.onboardingkit.article.service.ArticleService;
+import com.api.onboardingkit.config.SecurityConfig;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;

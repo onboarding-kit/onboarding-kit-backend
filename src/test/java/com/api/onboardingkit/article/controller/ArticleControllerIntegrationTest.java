@@ -1,10 +1,9 @@
-package com.example.onboardingkitbackend.article.controller;
+package com.api.onboardingkit.article.controller;
 
-import com.example.onboardingkitbackend.article.model.Article;
-import com.example.onboardingkitbackend.article.repository.ArticleRepository;
+import com.api.onboardingkit.article.repository.ArticleRepository;
+import com.api.onboardingkit.article.model.Article;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -13,7 +12,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
