@@ -2,35 +2,46 @@ package com.api.onboardingkit.config;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.stereotype.Component;
+import jakarta.annotation.PostConstruct;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 
-@Component
+@Configuration
+@ConfigurationProperties(prefix = "jwt")
+@Getter
+@Setter
 public class JwtTokenProvider {
 
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private String secret;
+    private Key key;
+    private static final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 30; // 30분
+    private static final long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7; // 7일
+
+    @PostConstruct
+    public void init() {
+        this.key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret));
+    }
 
     public String generateToken(String userId) {
-        // 30분
-        long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 30;
-        return Jwts.builder()
-                .setSubject(userId)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
-                .signWith(key)
-                .compact();
+        return createToken(userId, ACCESS_TOKEN_EXPIRATION);
     }
 
     public String generateRefreshToken(String userId) {
-        // 7일
-        long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7;
+        return createToken(userId, REFRESH_TOKEN_EXPIRATION);
+    }
+
+    private String createToken(String userId, long expiration) {
         return Jwts.builder()
                 .setSubject(userId)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
-                .signWith(key)
+                .setExpiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 

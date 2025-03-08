@@ -15,13 +15,21 @@ spring:
     user:
       name: admin
       password: admin1!
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: your-google-client-id
+            client-secret: your-google-client-secret
+            scope:
+              - profile
+              - email
   devtools:
     restart:
       enabled: true
   sql:
     init:
       mode: always
-
 server:
   port: 8080
   servlet:
@@ -30,3 +38,5 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+jwt:
+  secret: "mykey"
