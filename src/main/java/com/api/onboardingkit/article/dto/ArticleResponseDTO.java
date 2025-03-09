@@ -1,6 +1,6 @@
 package com.api.onboardingkit.article.dto;
 
-import com.api.onboardingkit.article.model.Article;
+import com.api.onboardingkit.article.entity.Article;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

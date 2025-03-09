@@ -1,4 +1,4 @@
-package com.api.onboardingkit.article.model;
+package com.api.onboardingkit.article.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

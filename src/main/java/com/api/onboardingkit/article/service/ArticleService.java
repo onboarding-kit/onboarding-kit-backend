@@ -4,8 +4,8 @@ import com.api.onboardingkit.article.repository.ArticleRepository;
 import com.api.onboardingkit.article.repository.HashtagRepository;
 import com.api.onboardingkit.article.dto.ArticleRequestDTO;
 import com.api.onboardingkit.article.dto.ArticleResponseDTO;
-import com.api.onboardingkit.article.model.Article;
-import com.api.onboardingkit.article.model.Hashtag;
+import com.api.onboardingkit.article.entity.Article;
+import com.api.onboardingkit.article.entity.Hashtag;
 import com.api.onboardingkit.article.dto.ArticleSearchDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,10 @@ public class ArticleService {
 
         return articles.stream()
                 .map(article -> {
-                    List<String> hashtags = hashtagRepository.findHashtagsByArticleId(article.getId());
+                    List<String> hashtags = hashtagRepository.findByArticleId(article.getId())
+                            .stream()
+                            .map(Hashtag::getContent)
+                            .collect(Collectors.toList());
                     return ArticleResponseDTO.fromEntity(article, hashtags);
                 })
                 .collect(Collectors.toList());
