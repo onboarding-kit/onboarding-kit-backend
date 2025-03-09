@@ -1,5 +1,6 @@
 package com.api.onboardingkit.config;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -25,6 +26,12 @@ public class JwtTokenProvider {
 
     @PostConstruct
     public void init() {
+        Dotenv dotenv = Dotenv.load();
+        this.secret = dotenv.get("JWT_SECRET_KEY");
+        if (this.secret == null || this.secret.isEmpty()) {
+            throw new IllegalStateException("JWT_SECRET_KEY가 설정되지 않았습니다!");
+        }
+
         this.key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret));
     }
 
