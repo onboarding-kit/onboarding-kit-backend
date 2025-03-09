@@ -15,7 +15,11 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // CSRF 비활성화
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // 모든 요청 허용
+                        .requestMatchers("/", "/login", "/oauth2/**").permitAll() // 홈, 로그인, OAuth 경로 허용
+                        .anyRequest().authenticated() // 나머지 요청은 인증 필요
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .defaultSuccessUrl("/welcome", true) // 로그인 성공 시 리디렉트
                 )
                 .headers(headers -> headers.frameOptions(frame -> frame.disable())); // H2 콘솔 접근 허용
 
