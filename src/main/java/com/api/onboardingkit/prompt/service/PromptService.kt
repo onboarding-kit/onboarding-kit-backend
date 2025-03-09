@@ -5,6 +5,7 @@ import com.api.onboardingkit.prompt.entity.PromptMessage
 import com.api.onboardingkit.prompt.entity.PromptSession
 import com.api.onboardingkit.prompt.repository.PromptMessageRepository
 import com.api.onboardingkit.prompt.repository.PromptSessionRepository
+import io.github.cdimascio.dotenv.Dotenv
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.RestTemplate
@@ -18,8 +19,9 @@ class PromptService(
     private val restTemplate: RestTemplate
 ) : AbstractService() {
 
+    private val dotenv = Dotenv.load()
     private val OPENAI_API_URL = "https://api.openai.com/v1/chat/completions"
-    private val OPENAI_API_KEY = "OPENAI_API_KEY"
+    private val OPENAI_API_KEY = dotenv["OPENAI_API_KEY"] ?: throw IllegalStateException("OPENAI_API_KEY가 설정되지 않았습니다.")
 
     @Transactional
     fun createSession(): PromptSession {
@@ -35,7 +37,7 @@ class PromptService(
         }
 
         val session = PromptSession(
-            id = gptSessionId,  // 🔹 `sessionId` → `id` 변경
+            id = gptSessionId,
             userNo = getUserNo()
         )
 
@@ -126,5 +128,4 @@ class PromptService(
 
         return message?.get("content") ?: "GPT 응답을 가져올 수 없습니다."
     }
-
 }
