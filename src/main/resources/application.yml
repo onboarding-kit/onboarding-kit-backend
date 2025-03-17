@@ -30,3 +30,19 @@ server:
       charset: UTF-8
       enabled: true
       force: true
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    operationsSorter: method
+    tagsSorter: alpha
+    docExpansion: none
+    displayRequestDuration: true
+    syntaxHighlight:
+      theme: monokai
+  cache:
+    disabled: true
