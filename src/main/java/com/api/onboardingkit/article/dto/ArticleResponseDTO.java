@@ -1,24 +1,27 @@
 package com.api.onboardingkit.article.dto;
 
 import com.api.onboardingkit.article.entity.Article;
-import lombok.Getter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ArticleResponseDTO {
     private Long id;
     private String category;
     private String subcategory;
-    private LocalDateTime postDate; // todo. LocalDate -> LocalDateTime 변경
+    private LocalDateTime postDate;
     private String source;
     private String title;
     private String summary;
     private int views;
     private String thumbnail;
     private String url;
-    private List<String> hashtags; // ✅ 해시태그 포함
+    private List<String> hashtags;
 
     public ArticleResponseDTO(Article article, List<String> hashtags) {
         this.id = article.getId();
@@ -34,7 +37,6 @@ public class ArticleResponseDTO {
         this.hashtags = hashtags;
     }
 
-    // todo. Entity 변환 메서드 추가
     public static ArticleResponseDTO fromEntity(Article article, List<String> hashtags) {
         return new ArticleResponseDTO(article, hashtags);
     }

@@ -1,10 +1,9 @@
 package com.api.onboardingkit.article.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ArticleSearchDTO {

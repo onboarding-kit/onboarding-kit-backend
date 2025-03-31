@@ -44,3 +44,61 @@ include::{snippets}/main-articles/http-response.adoc[]
 
 ==== 응답 필드 설명
 include::{snippets}/main-articles/response-fields.adoc[]
+
+== 아티클 API (ArticleController)
+
+=== 아티클 목록 조회 API (`GET /articles`)
+
+==== 요청
+include::{snippets}/articles-list/http-request.adoc[]
+
+==== 응답
+include::{snippets}/articles-list/http-response.adoc[]
+
+==== 응답 필드 설명
+include::{snippets}/articles-list/response-fields.adoc[]
+
+---
+
+=== 아티클 생성 API (`POST /articles`)
+
+==== 요청
+include::{snippets}/articles-create/http-request.adoc[]
+
+==== 요청 필드 설명
+include::{snippets}/articles-create/request-fields.adoc[]
+
+==== 응답
+include::{snippets}/articles-create/http-response.adoc[]
+
+==== 응답 필드 설명
+include::{snippets}/articles-create/response-fields.adoc[]
+
+---
+
+=== 아티클 해시태그 추가 API (`POST /articles/{id}/hashtags`)
+
+==== 요청
+include::{snippets}/articles-add-hashtag/http-request.adoc[]
+
+==== 경로 파라미터
+include::{snippets}/articles-add-hashtag/path-parameters.adoc[]
+
+==== 쿼리 파라미터
+include::{snippets}/articles-add-hashtag/query-parameters.adoc[]
+
+==== 응답
+include::{snippets}/articles-add-hashtag/http-response.adoc[]
+
+---
+
+=== 아티클 리다이렉트 API (`GET /articles/{id}/redirect`)
+
+==== 요청
+include::{snippets}/articles-redirect/http-request.adoc[]
+
+==== 경로 파라미터
+include::{snippets}/articles-redirect/path-parameters.adoc[]
+
+==== 응답
+include::{snippets}/articles-redirect/http-response.adoc[]
