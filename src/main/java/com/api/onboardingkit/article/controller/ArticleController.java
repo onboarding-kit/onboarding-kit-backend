@@ -17,7 +17,7 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @GetMapping
-    public ResponseEntity<List<ArticleResponseDTO>> fetchArticles(ArticleSearchDTO searchDTO) { // todo. searchdto 추가
+    public ResponseEntity<List<ArticleResponseDTO>> fetchArticles(ArticleSearchDTO searchDTO) {
         List<ArticleResponseDTO> articles = articleService.fetchArticles(searchDTO);
         return ResponseEntity.ok(articles);
     }
@@ -30,9 +30,7 @@ public class ArticleController {
         return ResponseEntity.ok(createdArticle);
     }
 
-    // todo. search 제거. 검색용 API를 따로 뺀 이유가 있는지 ?.? 아티클 조회로 통합
-
-    @GetMapping("/{id}/redirect") // todo. 이친구는 의도가 궁금 단순 페이지 뷰 count +1 인지!
+    @GetMapping("/{id}/redirect")
     public ResponseEntity<Void> redirectToSource(
             @PathVariable Long id
     ) {
@@ -41,7 +39,7 @@ public class ArticleController {
     }
 
     @PostMapping("/{id}/hashtags")
-    public ResponseEntity<String> addHashtag( // todo. 하나의 해시태그를 저장
+    public ResponseEntity<String> addHashtag(
             @PathVariable Long id,
             @RequestParam(required = false) String hashtag
     ) {
