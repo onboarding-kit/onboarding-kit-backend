@@ -1,11 +1,17 @@
 package com.api.onboardingkit.checklist.dto;
 
 import com.api.onboardingkit.checklist.entity.ChecklistItem;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ChecklistItemResponseDTO {
     private Long id;
     private Long checklistId;
