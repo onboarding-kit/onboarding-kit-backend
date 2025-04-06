@@ -8,6 +8,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -20,7 +21,7 @@ import io.jsonwebtoken.security.Keys;
 @Configuration
 @ConfigurationProperties(prefix = "jwt")
 @Getter
-@Getter
+@Setter
 public class JwtTokenProvider {
     private String secret;
     private Key key;

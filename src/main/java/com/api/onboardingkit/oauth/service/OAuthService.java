@@ -20,7 +20,7 @@ public class OAuthService {
         // 요청받은 OAuth Provider 추출
         OAuthProvider provider = oAuthProviderFactory.getProvider(oAuthRequestDto.getProvider());
 
-        // Access Token 검증 및 사용자 ID 반환
+        // 소셜 계정의 Access Token 검증 및 사용자 ID 반환
         String socialUserId = provider.validateToken(oAuthRequestDto.getToken());
 
         // 응답할 JWT 토큰 발급
