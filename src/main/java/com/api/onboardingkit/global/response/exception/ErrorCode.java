@@ -14,6 +14,7 @@ public enum ErrorCode {
     TOKEN_VALIDATE_FAILED("400","Jwt Token이 유효하지 않습니다."),
     APPLE_ID_VALIDATE_FAILED("400","Apple ID 토큰이 유효하지 않습니다."),
     NOT_FOUND_APPLE_PUBLIC_KEY("404","Apple Public Key를 찾을 수 없습니다."),
+    KAKAO_ID_VALIDATE_FAILED("400","Kakao 액세스 토큰이 유효하지 않습니다."),
     ;
 
     private final String code;
