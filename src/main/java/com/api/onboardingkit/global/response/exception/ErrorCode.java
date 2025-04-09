@@ -16,6 +16,9 @@ public enum ErrorCode {
     NOT_FOUND_APPLE_PUBLIC_KEY("404","Apple Public Key를 찾을 수 없습니다."),
     KAKAO_ID_VALIDATE_FAILED("400","Kakao 액세스 토큰이 유효하지 않습니다."),
     GOOGLE_ID_VALIDATE_FAILED("400","Google 액세스 토큰이 유효하지 않습니다."),
+
+    //member
+    MEMBER_NOT_FOUND("404","해당 이메일의 멤버를 찾을 수 없습니다."),
     ;
 
     private final String code;

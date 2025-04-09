@@ -10,6 +10,9 @@ public enum SuccessStatus {
 
     //oauth
     OAUTH_AUTHENTICATION("200", "OAuthService authebtication 성공"),
+
+    //member
+    GET_MEMBER_BY_EMAIL("200","이메일로 멤버 객체 추출 성공"),
     ;
 
     private final String code;

@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth/login")
+@RequestMapping("/oauth")
 @RequiredArgsConstructor
 public class OAuthController {
 
     private final OAuthService oAuthService;
 
-    @PostMapping
-    public Response<OAuthResponseDto> login(@RequestBody OAuthRequestDto requestDto) {
+    @PostMapping("/login")
+    public Response<OAuthResponseDto> OAuth2Login(@RequestBody OAuthRequestDto requestDto) {
         return oAuthService.authenticate(requestDto);
     }
 }

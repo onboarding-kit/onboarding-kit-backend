@@ -1,7 +1,14 @@
 package com.api.onboardingkit.member.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
+@Getter
+@Setter
+@Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Member {
 
     @Id
@@ -27,4 +34,5 @@ public class Member {
         this.detailRole = detailRole;
         this.experience = experience;
     }
+
 }
