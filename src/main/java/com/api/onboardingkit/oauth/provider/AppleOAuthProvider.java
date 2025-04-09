@@ -40,7 +40,8 @@ public class AppleOAuthProvider implements OAuthProvider {
 
             // Apple의 sub 값(사용자 ID)과 이메일 반환
             String email = claims.get("email", String.class);
-            return new SocialUserInfo(claims.getSubject(), email);
+            String id = claims.getSubject();
+            return new SocialUserInfo(id, email);
         }catch (Exception e){
             throw new CustomException(ErrorCode.APPLE_ID_VALIDATE_FAILED);
         }

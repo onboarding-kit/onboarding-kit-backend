@@ -15,13 +15,15 @@ public class MemberService {
 
     @Transactional
     public Member saveOrUpdate(Member member) {
-        Optional<Member> mem = memberRepository.findByEmail(member.getEmail());
+        Optional<Member> optionalMember = memberRepository.findByEmail(member.getEmail());
 
-        return mem.map(m ->{
-            m.updateProfile(member.getNickname(), member.getRole(), member.getDetailRole(), member.getExperience());
-            return memberRepository.save(m);
+        return optionalMember.map(mem ->{
+            mem.updateProfile(member.getNickname(), member.getRole(), member.getDetailRole(), member.getExperience());
+            return memberRepository.save(mem);
         }).orElseGet(() -> memberRepository.save(member));
     }
 
     public Optional<Member> findByEmail(String email) {return memberRepository.findByEmail(email);}
+
+
 }

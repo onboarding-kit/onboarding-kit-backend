@@ -15,6 +15,7 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = true)
     private String email;  // 소셜 로그인 이메일
     private String name;   // 소셜 로그인 사용자 이름
     private String nickname; // 닉네임
