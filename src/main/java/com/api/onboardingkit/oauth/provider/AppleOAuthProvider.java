@@ -3,7 +3,6 @@ package com.api.onboardingkit.oauth.provider;
 import com.api.onboardingkit.global.response.exception.CustomException;
 import com.api.onboardingkit.global.response.exception.ErrorCode;
 import com.api.onboardingkit.oauth.dto.SocialUserInfo;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
