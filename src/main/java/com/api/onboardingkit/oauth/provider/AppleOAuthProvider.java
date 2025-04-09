@@ -2,6 +2,7 @@ package com.api.onboardingkit.oauth.provider;
 
 import com.api.onboardingkit.global.response.exception.CustomException;
 import com.api.onboardingkit.global.response.exception.ErrorCode;
+import com.api.onboardingkit.oauth.dto.SocialUserInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -25,7 +26,7 @@ public class AppleOAuthProvider implements OAuthProvider {
     private static final String APPLE_PUBLIC_KEYS_URL = "https://appleid.apple.com/auth/oauth2/v2/keys";
 
     @Override
-    public String validateToken(String token) {
+    public SocialUserInfo validateToken(String token) {
         try{
             // Apple의 공개 키 가져오기
             PublicKey publicKey = getApplePublicKey(token);
@@ -36,8 +37,10 @@ public class AppleOAuthProvider implements OAuthProvider {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            // Apple의 sub 값(사용자 ID) 반환
-            return claims.getSubject();
+
+            // Apple의 sub 값(사용자 ID)과 이메일 반환
+            String email = claims.get("email", String.class);
+            return new SocialUserInfo(claims.getSubject(), email);
         }catch (Exception e){
             throw new CustomException(ErrorCode.APPLE_ID_VALIDATE_FAILED);
         }

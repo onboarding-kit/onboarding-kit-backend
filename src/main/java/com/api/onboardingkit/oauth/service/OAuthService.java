@@ -8,6 +8,7 @@ import com.api.onboardingkit.member.entity.SocialType;
 import com.api.onboardingkit.member.repository.MemberRepository;
 import com.api.onboardingkit.oauth.dto.OAuthRequestDto;
 import com.api.onboardingkit.oauth.dto.OAuthResponseDto;
+import com.api.onboardingkit.oauth.dto.SocialUserInfo;
 import com.api.onboardingkit.oauth.provider.OAuthProvider;
 import com.api.onboardingkit.oauth.provider.OAuthProviderFactory;
 import lombok.RequiredArgsConstructor;
@@ -26,22 +27,23 @@ public class OAuthService {
         // 요청받은 OAuth Provider 추출
         OAuthProvider provider = oAuthProviderFactory.getProvider(oAuthRequestDto.getProvider());
 
-        // 소셜 계정의 Access Token 검증 및 사용자 ID 반환
-        String socialUserId = provider.validateToken(oAuthRequestDto.getToken());
+        // 소셜 계정의 Access Token 검증 및 사용자 ID, email 반환
+        SocialUserInfo memberInfo = provider.validateToken(oAuthRequestDto.getToken());
 
         // 사용자 조회 or DB에 저장
-        Member member = memberRepository.findBySocialIdAndProvider(socialUserId, oAuthRequestDto.getProvider())
+        Member member = memberRepository.findBySocialIdAndProvider(memberInfo.getSocialId(), oAuthRequestDto.getProvider())
                 .orElseGet(()-> {
                     Member newMember = Member.builder()
                             .socialType(SocialType.valueOf(oAuthRequestDto.getProvider()))
-                            .socialId(socialUserId)
+                            .socialId(memberInfo.getSocialId())
+                            .email(memberInfo.getEmail())
                             .build();
                     return memberRepository.save(newMember);
                 });
 
         // 응답할 JWT 토큰 발급
-        String accessToken = jwtTokenProvider.generateToken(socialUserId);
-        String refreshToken = jwtTokenProvider.generateToken(socialUserId);
+        String accessToken = jwtTokenProvider.generateToken(memberInfo.getSocialId());
+        String refreshToken = jwtTokenProvider.generateToken(memberInfo.getSocialId());
 
         return Response.success(
                 new OAuthResponseDto(accessToken, refreshToken),

@@ -1,5 +1,7 @@
 package com.api.onboardingkit.oauth.provider;
 
+import com.api.onboardingkit.oauth.dto.SocialUserInfo;
+
 public interface OAuthProvider {
-    String validateToken(String token);
+    SocialUserInfo validateToken(String token);
 }
