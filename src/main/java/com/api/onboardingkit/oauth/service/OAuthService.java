@@ -43,7 +43,7 @@ public class OAuthService {
                 });
 
         // 응답할 JWT 토큰 발급
-        String accessToken = jwtTokenProvider.generateToken(memberInfo.getSocialId(), member.getId());
+        String accessToken = jwtTokenProvider.generateToken(memberInfo.getSocialId(), socialType.getValue());
         String refreshToken = jwtTokenProvider.generateRefreshToken(memberInfo.getSocialId());
 
         return Response.success(

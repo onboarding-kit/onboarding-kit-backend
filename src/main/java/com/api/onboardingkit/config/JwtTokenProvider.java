@@ -3,6 +3,7 @@ package com.api.onboardingkit.config;
 import com.api.onboardingkit.global.response.exception.CustomException;
 import com.api.onboardingkit.global.response.exception.ErrorCode;
 import io.github.cdimascio.dotenv.Dotenv;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -21,7 +22,6 @@ import io.jsonwebtoken.security.Keys;
 @Configuration
 @ConfigurationProperties(prefix = "jwt")
 @Getter
-@Setter
 public class JwtTokenProvider {
     private String secret;
     private Key key;
@@ -39,24 +39,25 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret));
     }
 
-    public String generateToken(String userId) {
-        return createToken(userId, ACCESS_TOKEN_EXPIRATION);
+    public String generateToken(String socialId, String socialType) {
+        return createToken(socialId, socialType, ACCESS_TOKEN_EXPIRATION);
     }
 
-    public String generateRefreshToken(String userId) {
-        return createToken(userId, REFRESH_TOKEN_EXPIRATION);
+    public String generateRefreshToken(String socialId) {
+        return createToken(socialId, null, REFRESH_TOKEN_EXPIRATION);
     }
 
-    private String createToken(String userId, long expiration) {
+    private String createToken(String socialId, String socialType, long expiration) {
         return Jwts.builder()
-                .setSubject(userId)
+                .setSubject(socialId)
+                .claim("socialType", socialType)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()+expiration))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
 
-    private boolean validateToken(String token) {
+    public boolean validateToken(String token) {
         try{
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
@@ -65,10 +66,21 @@ public class JwtTokenProvider {
         }
     }
 
-    public String getUserIdFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build()
-                .parseClaimsJws(token)
-                .getBody().getSubject();
+    public String getSocialIdFromToken(String token) {
+        Claims claims = parseClaims(token);
+        return claims.getSubject(); // sub, socialId 값
     }
 
+    public String getSocialTypeFromToken(String token) {
+        Claims claims = parseClaims(token);
+        return claims.get("socialType", String.class); // socialType(provider) 값
+    }
+
+    public Claims parseClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
 }
