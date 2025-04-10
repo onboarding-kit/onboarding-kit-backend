@@ -18,7 +18,9 @@ public enum ErrorCode {
     GOOGLE_ID_VALIDATE_FAILED("400","Google 액세스 토큰이 유효하지 않습니다."),
 
     //member
-    MEMBER_NOT_FOUND("404","해당 이메일의 멤버를 찾을 수 없습니다."),
+    MEMBER_NOT_FOUND_FROM_EMAIL("404","해당 이메일의 멤버를 찾을 수 없습니다."),
+    MEMBER_NOT_FOUND_FROM_ACCESS_TOKEN("404","해당 액세스 토큰으로 멤버를 찾을 수 없습니다."),
+
     ;
 
     private final String code;

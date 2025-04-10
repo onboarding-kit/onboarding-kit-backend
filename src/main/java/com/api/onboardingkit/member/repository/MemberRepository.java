@@ -1,11 +1,13 @@
 package com.api.onboardingkit.member.repository;
 
 import com.api.onboardingkit.member.entity.Member;
+import com.api.onboardingkit.member.entity.SocialType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
+    Optional<Member> findById(Long id);
     Optional<Member> findByEmail(String email);
-    Optional<Member> findBySocialIdAndProvider(String socialId, String provider);
+    Optional<Member> findBySocialIdAndSocialType(String socialId, SocialType socialType);
 }
