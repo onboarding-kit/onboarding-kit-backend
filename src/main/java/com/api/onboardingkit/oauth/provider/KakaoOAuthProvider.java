@@ -25,8 +25,14 @@ public class KakaoOAuthProvider implements OAuthProvider {
         ResponseEntity<Map> response = restTemplate.postForEntity(KAKAO_OAUTH_URL, entity, Map.class);
 
         if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-            String email = response.getBody().get("email").toString();
-            String id = response.getBody().get("id").toString();
+            Map<String, Object> body = response.getBody();
+
+            String id = body.get("id").toString();
+            Map<String, Object> kakaoAccount = (Map<String, Object>) body.get("kakao_account");
+            if (kakaoAccount == null || kakaoAccount.get("email") == null) {
+                throw new CustomException(ErrorCode.KAKAO_ID_VALIDATE_FAILED);
+            }
+            String email = kakaoAccount.get("email").toString();
 
             return new SocialUserInfo(id, email);
         }

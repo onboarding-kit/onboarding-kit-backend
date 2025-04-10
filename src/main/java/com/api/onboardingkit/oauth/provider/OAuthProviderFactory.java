@@ -20,7 +20,7 @@ public class OAuthProviderFactory {
 
     public OAuthProvider getProvider(String provider) {
         if(!providers.containsKey(provider)) {
-            throw new CustomException(ErrorCode.TEST_ERROR_CODE);
+            throw new CustomException(ErrorCode.NOT_ALLOWED_OAUTH_PROVIDER);
         }
         return providers.get(provider);
     }
