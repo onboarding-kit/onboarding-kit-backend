@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -20,9 +21,10 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
 
+@Slf4j
 @Component
 public class AppleOAuthProvider implements OAuthProvider {
-    private static final String APPLE_PUBLIC_KEYS_URL = "https://appleid.apple.com/auth/oauth2/v2/keys";
+    private static final String APPLE_PUBLIC_KEYS_URL = "https://appleid.apple.com/auth/keys";
 
     @Override
     public SocialUserInfo validateToken(String token) {
@@ -36,12 +38,14 @@ public class AppleOAuthProvider implements OAuthProvider {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-
+            
             // Apple의 sub 값(사용자 ID)과 이메일 반환
             String email = claims.get("email", String.class);
             String id = claims.getSubject();
+
             return new SocialUserInfo(id, email);
         }catch (Exception e){
+            log.error("Apple 토큰 검증 실패: {}", e.getMessage(), e);
             throw new CustomException(ErrorCode.APPLE_ID_VALIDATE_FAILED);
         }
     }
