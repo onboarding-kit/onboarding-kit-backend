@@ -46,7 +46,7 @@ class PromptService(
         val session = promptSessionRepository.findById(sessionId)
             .orElseThrow { IllegalArgumentException("세션을 찾을 수 없습니다.") }
 
-        return promptMessageRepository.findBySessionId(session.toString())
+        return promptMessageRepository.findBySessionId(sessionId)
     }
 
     @Transactional
@@ -55,7 +55,7 @@ class PromptService(
             .orElseThrow { IllegalArgumentException("세션을 찾을 수 없습니다.") }
 
         val userMessageEntity = PromptMessage(
-            sessionId = session.toString(),
+            sessionId = session.id,
             messageText = userMessage,
             isUser = true,
             timestamp = LocalDateTime.now()
@@ -65,7 +65,7 @@ class PromptService(
         val gptResponse = callGptApi(sessionId, userMessage)
 
         val botMessageEntity = PromptMessage(
-            sessionId = session.toString(),
+            sessionId = session.id,
             messageText = gptResponse,
             isUser = false,
             timestamp = LocalDateTime.now()
