@@ -80,6 +80,28 @@ public class ArticleService {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 아티클이 존재하지 않습니다: " + articleId));
 
+        // 해시태그 개수 세기
+        List<Hashtag> existingHashtags = hashtagRepository.findByArticleId(articleId);
+        int hashtagCount = existingHashtags.size();
+
+        // 해시태그 개수 3개로 제한
+        if (hashtagCount >= 3) {
+            throw new IllegalArgumentException("해시태그는 최대 3개까지만 추가할 수 있습니다.");
+        }
+
+        // 해시태그 개수(등록할 해시태그 1개 포함)에 따른 최대 길이 설정
+        int maxLength = switch (hashtagCount + 1) {
+            case 2 -> 18;
+            case 3 -> 15;
+            case 1 -> 20;
+            default -> 20;
+        };
+
+        // 공백 포함 글자수 최대 길이에 맞춤
+        if (hashtagContent.length() > maxLength) {
+            hashtagContent = hashtagContent.substring(0, maxLength);
+        }
+
         Hashtag hashtag = Hashtag.builder()
                 .articleId(article.getId())
                 .content(hashtagContent)
