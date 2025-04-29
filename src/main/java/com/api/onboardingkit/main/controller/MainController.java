@@ -1,8 +1,10 @@
 package com.api.onboardingkit.main.controller;
 
-import com.api.onboardingkit.main.dto.MainStatusChecklistDTO;
+import com.api.onboardingkit.config.response.dto.CustomResponse;
+import com.api.onboardingkit.config.response.dto.SuccessStatus;
 import com.api.onboardingkit.main.dto.MainArticleDTO;
 import com.api.onboardingkit.main.dto.MainChecklistDTO;
+import com.api.onboardingkit.main.dto.MainStatusChecklistDTO;
 import com.api.onboardingkit.main.service.MainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,20 +22,17 @@ public class MainController {
     private final MainService mainService;
 
     @GetMapping("/checklists/status")
-    public ResponseEntity<List<MainStatusChecklistDTO>> getChecklistProgress(
-    ) {
-        return ResponseEntity.ok(mainService.getMainChecklistStatus());
+    public ResponseEntity<CustomResponse<List<MainStatusChecklistDTO>>> getChecklistProgress() {
+        return ResponseEntity.ok(CustomResponse.success(mainService.getMainChecklistStatus(), SuccessStatus.SUCCESS));
     }
 
     @GetMapping("/checklists")
-    public ResponseEntity<MainChecklistDTO> getMainChecklist() {
-        return ResponseEntity.ok(mainService.getMainChecklist());
+    public ResponseEntity<CustomResponse<MainChecklistDTO>> getMainChecklist() {
+        return ResponseEntity.ok(CustomResponse.success(mainService.getMainChecklist(), SuccessStatus.SUCCESS));
     }
 
     @GetMapping("/articles")
-    public ResponseEntity<List<MainArticleDTO>> getMainArticles(
-    ) {
-        return ResponseEntity.ok(mainService.getMainArticles());
+    public ResponseEntity<CustomResponse<List<MainArticleDTO>>> getMainArticles() {
+        return ResponseEntity.ok(CustomResponse.success(mainService.getMainArticles(), SuccessStatus.SUCCESS));
     }
-
 }

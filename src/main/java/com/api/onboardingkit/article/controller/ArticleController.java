@@ -4,6 +4,8 @@ import com.api.onboardingkit.article.dto.ArticleRequestDTO;
 import com.api.onboardingkit.article.dto.ArticleResponseDTO;
 import com.api.onboardingkit.article.dto.ArticleSearchDTO;
 import com.api.onboardingkit.article.service.ArticleService;
+import com.api.onboardingkit.config.response.dto.CustomResponse;
+import com.api.onboardingkit.config.response.dto.SuccessStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,17 +19,17 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @GetMapping
-    public ResponseEntity<List<ArticleResponseDTO>> fetchArticles(ArticleSearchDTO searchDTO) {
+    public ResponseEntity<CustomResponse<List<ArticleResponseDTO>>> fetchArticles(ArticleSearchDTO searchDTO) {
         List<ArticleResponseDTO> articles = articleService.fetchArticles(searchDTO);
-        return ResponseEntity.ok(articles);
+        return ResponseEntity.ok(CustomResponse.success(articles, SuccessStatus.SUCCESS));
     }
 
     @PostMapping
-    public ResponseEntity<ArticleResponseDTO> createArticle(
+    public ResponseEntity<CustomResponse<ArticleResponseDTO>> createArticle(
             @RequestBody ArticleRequestDTO requestDTO
     ) {
         ArticleResponseDTO createdArticle = articleService.createArticle(requestDTO);
-        return ResponseEntity.ok(createdArticle);
+        return ResponseEntity.ok(CustomResponse.success(createdArticle, SuccessStatus.SUCCESS));
     }
 
     @GetMapping("/{id}/redirect")
@@ -39,12 +41,11 @@ public class ArticleController {
     }
 
     @PostMapping("/{id}/hashtags")
-    public ResponseEntity<String> addHashtag(
+    public ResponseEntity<CustomResponse<String>> addHashtag(
             @PathVariable Long id,
             @RequestParam(required = false) String hashtag
     ) {
         articleService.addHashtagToArticle(id, hashtag);
-        return ResponseEntity.ok("해시태그가 성공적으로 추가되었습니다.");
+        return ResponseEntity.ok(CustomResponse.success("해시태그가 성공적으로 추가되었습니다.", SuccessStatus.SUCCESS));
     }
-
 }

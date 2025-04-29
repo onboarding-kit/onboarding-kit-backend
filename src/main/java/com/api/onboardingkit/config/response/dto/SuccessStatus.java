@@ -8,6 +8,7 @@ import lombok.Getter;
 public enum SuccessStatus {
     TEST_SUCCESS_CODE(200, "응답 테스트 성공입니다."),
 
+    SUCCESS(200,"성공"),
     //oauth
     OAUTH_AUTHENTICATION(200, "소셜 액세스 토큰 인증 성공"),
 
