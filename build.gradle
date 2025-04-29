@@ -86,4 +86,8 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 tasks.withType(Test).configureEach {
     enabled = false
 }
-build.dependsOn copyDocs
+
+tasks.named('processResources') {
+    dependsOn('copyDocs')
+}
+
