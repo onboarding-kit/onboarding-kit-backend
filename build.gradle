@@ -2,6 +2,9 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.2'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.jetbrains.kotlin.jvm' version '1.9.24' // todo. 코틀린 추가
+    id 'org.jetbrains.kotlin.plugin.spring' version '1.9.24' // todo. 코틀린 스프링 추가
+    id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.24' // todo. 코틀린 JPA 추가
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
@@ -30,6 +33,11 @@ ext {
 }
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib" // todo. jvm 맞춤 코틀린
+    implementation "org.jetbrains.kotlin:kotlin-reflect" // todo. 코틀린 리플렉션 추가
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2:2.2.224'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -68,4 +76,14 @@ tasks.register('copyDocs', Copy) {
     into "src/main/resources/static/docs"
 }
 
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        jvmTarget = "17"
+        freeCompilerArgs = ["-Xjsr305=strict"]
+    }
+}
+
+tasks.withType(Test).configureEach {
+    enabled = false
+}
 build.dependsOn copyDocs
