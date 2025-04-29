@@ -1,8 +1,8 @@
 package com.api.onboardingkit.member.service;
 
 import com.api.onboardingkit.config.AbstractService;
-import com.api.onboardingkit.global.response.exception.CustomException;
-import com.api.onboardingkit.global.response.exception.ErrorCode;
+import com.api.onboardingkit.config.exception.CustomException;
+import com.api.onboardingkit.config.exception.ErrorCode;
 import com.api.onboardingkit.member.dto.MemberRequestDto;
 import com.api.onboardingkit.member.entity.Member;
 import com.api.onboardingkit.member.entity.SocialType;

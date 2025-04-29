@@ -1,4 +1,4 @@
-package com.api.onboardingkit.global.response.dto;
+package com.api.onboardingkit.config.response.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

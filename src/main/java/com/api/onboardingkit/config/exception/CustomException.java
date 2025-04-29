@@ -1,4 +1,4 @@
-package com.api.onboardingkit.global.response.exception;
+package com.api.onboardingkit.config.exception;
 
 import lombok.Getter;
 
