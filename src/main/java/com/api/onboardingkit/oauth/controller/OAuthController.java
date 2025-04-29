@@ -1,6 +1,6 @@
 package com.api.onboardingkit.oauth.controller;
 
-import com.api.onboardingkit.global.response.dto.Response;
+import com.api.onboardingkit.config.response.dto.CustomResponse;
 import com.api.onboardingkit.oauth.dto.OAuthRequestDto;
 import com.api.onboardingkit.oauth.dto.OAuthResponseDto;
 import com.api.onboardingkit.oauth.service.OAuthService;
@@ -18,7 +18,7 @@ public class OAuthController {
     private final OAuthService oAuthService;
 
     @PostMapping("/login")
-    public Response<OAuthResponseDto> OAuth2Login(@RequestBody OAuthRequestDto requestDto) {
+    public CustomResponse<OAuthResponseDto> OAuth2Login(@RequestBody OAuthRequestDto requestDto) {
         return oAuthService.authenticate(requestDto);
     }
 }

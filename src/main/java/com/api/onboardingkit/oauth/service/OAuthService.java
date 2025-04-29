@@ -1,8 +1,8 @@
 package com.api.onboardingkit.oauth.service;
 
 import com.api.onboardingkit.config.JwtTokenProvider;
-import com.api.onboardingkit.global.response.dto.Response;
-import com.api.onboardingkit.global.response.dto.SuccessStatus;
+import com.api.onboardingkit.config.response.dto.CustomResponse;
+import com.api.onboardingkit.config.response.dto.SuccessStatus;
 import com.api.onboardingkit.member.entity.Member;
 import com.api.onboardingkit.member.entity.SocialType;
 import com.api.onboardingkit.member.repository.MemberRepository;
@@ -22,7 +22,7 @@ public class OAuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
 
-    public Response<OAuthResponseDto> authenticate(OAuthRequestDto oAuthRequestDto) {
+    public CustomResponse<OAuthResponseDto> authenticate(OAuthRequestDto oAuthRequestDto) {
         // 요청받은 OAuth Provider 추출
         OAuthProvider provider = oAuthProviderFactory.getProvider(oAuthRequestDto.getSocialType());
 
@@ -46,7 +46,7 @@ public class OAuthService {
         String accessToken = jwtTokenProvider.generateToken(memberInfo.getSocialId(), socialType.getValue());
         String refreshToken = jwtTokenProvider.generateRefreshToken(memberInfo.getSocialId());
 
-        return Response.success(
+        return CustomResponse.success(
                 new OAuthResponseDto(accessToken, refreshToken),
                 SuccessStatus.OAUTH_AUTHENTICATION
         );

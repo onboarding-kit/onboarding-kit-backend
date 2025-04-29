@@ -1,7 +1,7 @@
 package com.api.onboardingkit.oauth.provider;
 
-import com.api.onboardingkit.global.response.exception.CustomException;
-import com.api.onboardingkit.global.response.exception.ErrorCode;
+import com.api.onboardingkit.config.exception.CustomException;
+import com.api.onboardingkit.config.exception.ErrorCode;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
