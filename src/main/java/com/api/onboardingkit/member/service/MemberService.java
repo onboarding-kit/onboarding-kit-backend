@@ -22,8 +22,7 @@ public class MemberService extends AbstractService{
     public Member saveOrUpdate(MemberRequestDto requestDto) {
 
         // 헤더에서 토큰으로 사용자 정보 추출하여 기능 수행
-        SocialType socialType = SocialType.from(getSocialType());
-        Optional<Member> optionalMember = memberRepository.findBySocialIdAndSocialType(getSocialId(), socialType);
+        Optional<Member> optionalMember = memberRepository.findById(getMemberId());
 
         Member member = optionalMember
                 .map(m -> {

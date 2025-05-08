@@ -10,7 +10,7 @@ public abstract class AbstractService {
         return SecurityUtil.getCurrentSocialType();
     }
 
-    protected Long getUserNo() {
+    protected Long getMemberId() {
         return Long.parseLong(SecurityUtil.getCurrentSocialId());
     }
 }

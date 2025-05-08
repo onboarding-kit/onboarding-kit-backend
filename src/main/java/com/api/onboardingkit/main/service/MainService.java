@@ -24,7 +24,7 @@ public class MainService extends AbstractService {
     private final ChecklistItemRepository checklistItemRepository;
 
     public List<MainStatusChecklistDTO> getMainChecklistStatus() {
-        return checklistRepository.findByUserNo(getUserNo()).stream()
+        return checklistRepository.findByUserNo(getMemberId()).stream()
                 .map(checklist -> {
                     Integer totalItems = checklistItemRepository.countByChecklistId(checklist.getId());
                     Integer completedItems = checklistItemRepository.countByChecklistIdAndCompleted(checklist.getId(), true);
@@ -36,7 +36,7 @@ public class MainService extends AbstractService {
     }
 
     public MainChecklistDTO getMainChecklist() {
-        Checklist recentChecklist = checklistRepository.findTopByUserNoOrderByCreatedTimeDesc(getUserNo())
+        Checklist recentChecklist = checklistRepository.findTopByUserNoOrderByCreatedTimeDesc(getMemberId())
                 .orElseThrow(() -> new IllegalArgumentException("최근 체크리스트가 존재하지 않습니다."));
 
         List<MainChecklistItemDTO> pendingItems = checklistItemRepository
