@@ -13,19 +13,20 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
+@RequestMapping("/member")
 @RequiredArgsConstructor
 public class MemberController {
     private final MemberService memberService;
 
-    @GetMapping("/member/me/{email}")
-    public CustomResponse<Member> getMemberByEmail(@PathVariable String email) {
-        Member mem = memberService.findByEmail(email)
-                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND_FROM_EMAIL));
-        return CustomResponse.success(mem, SuccessStatus.GET_MEMBER_BY_EMAIL);
+    @GetMapping("/me")
+    public CustomResponse<Member> getMyProfile() {
+        Member member = memberService.getCurrentMember()
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND_FROM_ACCESS_TOKEN));
+        return CustomResponse.success(member, SuccessStatus.GET_MEMBER_BY_EMAIL);
     }
 
-    @PatchMapping("/member/me")
-    public CustomResponse<?> UpdateMemberInfo(@Valid @RequestBody MemberRequestDto requestDto){
+    @PatchMapping
+    public CustomResponse<?> updateMyProfile(@Valid @RequestBody MemberRequestDto requestDto){
         memberService.saveOrUpdate(requestDto);
         return CustomResponse.success(SuccessStatus.UPDATE_MEMBER_OK);
     }

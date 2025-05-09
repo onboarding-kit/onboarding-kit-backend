@@ -15,8 +15,13 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService extends AbstractService{
+public class MemberService extends AbstractService {
+
     private final MemberRepository memberRepository;
+
+    public Optional<Member> getCurrentMember() {
+        return memberRepository.findById(getMemberId());
+    }
 
     @Transactional
     public Member saveOrUpdate(MemberRequestDto requestDto) {
@@ -39,5 +44,4 @@ public class MemberService extends AbstractService{
         return member;
     }
 
-    public Optional<Member> findByEmail(String email) {return memberRepository.findByEmail(email);}
 }
