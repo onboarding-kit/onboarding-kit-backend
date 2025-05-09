@@ -36,7 +36,7 @@ class PromptService(
 
         val session = PromptSession(
             id = gptSessionId,  // 🔹 `sessionId` → `id` 변경
-            userNo = getUserNo()
+            userNo = getMemberId()
         )
 
         return promptSessionRepository.save(session)

@@ -25,7 +25,7 @@ public class ChecklistService extends AbstractService {
     private final ChecklistItemRepository checklistItemRepository;
 
     public List<ChecklistResponseDTO> getUserChecklists() {
-        return checklistRepository.findByUserNo(getUserNo()).stream()
+        return checklistRepository.findByUserNo(getMemberId()).stream()
                 .map(ChecklistResponseDTO::new)
                 .collect(Collectors.toList());
     }
@@ -33,7 +33,7 @@ public class ChecklistService extends AbstractService {
     @Transactional
     public ChecklistResponseDTO createChecklist(ChecklistRequestDTO requestDTO) {
         Checklist checklist = Checklist.builder()
-                .userNo(getUserNo())
+                .userNo(getMemberId())
                 .title(requestDTO.getTitle())
                 .createdTime(LocalDateTime.now())
                 .updatedTime(LocalDateTime.now())
