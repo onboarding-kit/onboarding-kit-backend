@@ -15,15 +15,19 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService extends AbstractService{
+public class MemberService extends AbstractService {
+
     private final MemberRepository memberRepository;
+
+    public Optional<Member> getCurrentMember() {
+        return memberRepository.findById(getMemberId());
+    }
 
     @Transactional
     public Member saveOrUpdate(MemberRequestDto requestDto) {
 
         // 헤더에서 토큰으로 사용자 정보 추출하여 기능 수행
-        SocialType socialType = SocialType.from(getSocialType());
-        Optional<Member> optionalMember = memberRepository.findBySocialIdAndSocialType(getSocialId(), socialType);
+        Optional<Member> optionalMember = memberRepository.findById(getMemberId());
 
         Member member = optionalMember
                 .map(m -> {
@@ -40,5 +44,4 @@ public class MemberService extends AbstractService{
         return member;
     }
 
-    public Optional<Member> findByEmail(String email) {return memberRepository.findByEmail(email);}
 }

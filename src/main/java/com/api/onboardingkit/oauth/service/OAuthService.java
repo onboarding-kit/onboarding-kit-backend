@@ -43,8 +43,8 @@ public class OAuthService {
                 });
 
         // 응답할 JWT 토큰 발급
-        String accessToken = jwtTokenProvider.generateToken(memberInfo.getSocialId(), socialType.getValue());
-        String refreshToken = jwtTokenProvider.generateRefreshToken(memberInfo.getSocialId());
+        String accessToken = jwtTokenProvider.generateToken(String.valueOf(member.getId()));
+        String refreshToken = jwtTokenProvider.generateRefreshToken(String.valueOf(member.getId()));
 
         return CustomResponse.success(
                 new OAuthResponseDto(accessToken, refreshToken),

@@ -38,18 +38,17 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret));
     }
 
-    public String generateToken(String socialId, String socialType) {
-        return createToken(socialId, socialType, ACCESS_TOKEN_EXPIRATION);
+    public String generateToken(String memberId) {
+        return createToken(memberId, ACCESS_TOKEN_EXPIRATION);
     }
 
-    public String generateRefreshToken(String socialId) {
-        return createToken(socialId, null, REFRESH_TOKEN_EXPIRATION);
+    public String generateRefreshToken(String memberId) {
+        return createToken(memberId, REFRESH_TOKEN_EXPIRATION);
     }
 
-    private String createToken(String socialId, String socialType, long expiration) {
+    private String createToken(String memberId, long expiration) {
         return Jwts.builder()
-                .setSubject(socialId)
-                .claim("socialType", socialType)
+                .setSubject(memberId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()+expiration))
                 .signWith(key, SignatureAlgorithm.HS256)
