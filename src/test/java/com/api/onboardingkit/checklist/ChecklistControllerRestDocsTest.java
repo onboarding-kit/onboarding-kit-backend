@@ -3,6 +3,8 @@ package com.api.onboardingkit.checklist;
 import com.api.onboardingkit.checklist.controller.ChecklistController;
 import com.api.onboardingkit.checklist.dto.*;
 import com.api.onboardingkit.checklist.service.ChecklistService;
+import com.api.onboardingkit.config.JwtAuthenticationFilter;
+import com.api.onboardingkit.config.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,15 @@ public class ChecklistControllerRestDocsTest {
     @MockBean
     private ChecklistService checklistService;
 
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    private final String AUTH_HEADER = "Authorization";
+    private final String BEARER_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzQ2NzUwMzkyLCJleHAiOjE3NDY3NTIxOTJ9.at_CI6S-_tsBBbuncKyZeSCFDHV5PetEgi0MVHv7IjQ";
+
     @Test
     @DisplayName("체크리스트 전체 조회 API")
     void getUserChecklists() throws Exception {
@@ -49,26 +60,25 @@ public class ChecklistControllerRestDocsTest {
 
         given(checklistService.getUserChecklists()).willReturn(List.of(response));
 
-        mockMvc.perform(get("/checklists"))
+        mockMvc.perform(get("/checklists")
+                        .header(AUTH_HEADER, BEARER_TOKEN))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("checklists-list",
                         responseFields(
-                                fieldWithPath("[].id").description("체크리스트 ID"),
-                                fieldWithPath("[].userNo").description("사용자 번호"),
-                                fieldWithPath("[].title").description("체크리스트 제목"),
-                                fieldWithPath("[].createdTime").description("생성일시"),
-                                fieldWithPath("[].updatedTime").description("수정일시")
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data[].id").description("체크리스트 ID"),
+                                fieldWithPath("data[].userNo").description("사용자 번호"),
+                                fieldWithPath("data[].title").description("체크리스트 제목"),
+                                fieldWithPath("data[].createdTime").description("생성일시"),
+                                fieldWithPath("data[].updatedTime").description("수정일시")
                         )));
     }
 
     @Test
     @DisplayName("체크리스트 생성 API")
     void createChecklist() throws Exception {
-        ChecklistRequestDTO request = ChecklistRequestDTO.builder()
-                .title("신규 체크리스트")
-                .build();
-
         ChecklistResponseDTO response = ChecklistResponseDTO.builder()
                 .id(1L)
                 .userNo(100L)
@@ -80,6 +90,7 @@ public class ChecklistControllerRestDocsTest {
         given(checklistService.createChecklist(any(ChecklistRequestDTO.class))).willReturn(response);
 
         mockMvc.perform(post("/checklists")
+                        .header(AUTH_HEADER, BEARER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -93,11 +104,13 @@ public class ChecklistControllerRestDocsTest {
                                 fieldWithPath("title").description("체크리스트 제목")
                         ),
                         responseFields(
-                                fieldWithPath("id").description("체크리스트 ID"),
-                                fieldWithPath("userNo").description("사용자 번호"),
-                                fieldWithPath("title").description("체크리스트 제목"),
-                                fieldWithPath("createdTime").description("생성일시"),
-                                fieldWithPath("updatedTime").description("수정일시")
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data.id").description("체크리스트 ID"),
+                                fieldWithPath("data.userNo").description("사용자 번호"),
+                                fieldWithPath("data.title").description("체크리스트 제목"),
+                                fieldWithPath("data.createdTime").description("생성일시"),
+                                fieldWithPath("data.updatedTime").description("수정일시")
                         )));
     }
 
@@ -105,6 +118,7 @@ public class ChecklistControllerRestDocsTest {
     @DisplayName("체크리스트 제목 수정 API")
     void updateChecklistTitle() throws Exception {
         mockMvc.perform(put("/checklists/{checklistId}/title", 1L)
+                        .header(AUTH_HEADER, BEARER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -119,6 +133,11 @@ public class ChecklistControllerRestDocsTest {
                         ),
                         requestFields(
                                 fieldWithPath("title").description("수정할 체크리스트 제목")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data").description("결과 메시지")
                         )));
     }
 
@@ -136,7 +155,8 @@ public class ChecklistControllerRestDocsTest {
 
         given(checklistService.getChecklistItems(1L)).willReturn(List.of(item));
 
-        mockMvc.perform(get("/checklists/{checklistId}/items", 1L))
+        mockMvc.perform(get("/checklists/{checklistId}/items", 1L)
+                        .header(AUTH_HEADER, BEARER_TOKEN))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("checklists-items-list",
@@ -144,22 +164,20 @@ public class ChecklistControllerRestDocsTest {
                                 parameterWithName("checklistId").description("체크리스트 ID")
                         ),
                         responseFields(
-                                fieldWithPath("[].id").description("아이템 ID"),
-                                fieldWithPath("[].checklistId").description("체크리스트 ID"),
-                                fieldWithPath("[].content").description("아이템 내용"),
-                                fieldWithPath("[].completed").description("완료 여부"),
-                                fieldWithPath("[].createdTime").description("생성일시"),
-                                fieldWithPath("[].updatedTime").description("수정일시")
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data[].id").description("아이템 ID"),
+                                fieldWithPath("data[].checklistId").description("체크리스트 ID"),
+                                fieldWithPath("data[].content").description("아이템 내용"),
+                                fieldWithPath("data[].completed").description("완료 여부"),
+                                fieldWithPath("data[].createdTime").description("생성일시"),
+                                fieldWithPath("data[].updatedTime").description("수정일시")
                         )));
     }
 
     @Test
     @DisplayName("체크리스트 항목 추가 API")
     void addChecklistItem() throws Exception {
-        ChecklistItemRequestDTO request = ChecklistItemRequestDTO.builder()
-                .content("보안카드 수령")
-                .build();
-
         ChecklistItemResponseDTO response = ChecklistItemResponseDTO.builder()
                 .id(1L)
                 .checklistId(1L)
@@ -173,6 +191,7 @@ public class ChecklistControllerRestDocsTest {
                 .willReturn(response);
 
         mockMvc.perform(post("/checklists/{checklistId}/items", 1L)
+                        .header(AUTH_HEADER, BEARER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -189,25 +208,33 @@ public class ChecklistControllerRestDocsTest {
                                 fieldWithPath("content").description("체크리스트 항목 내용")
                         ),
                         responseFields(
-                                fieldWithPath("id").description("아이템 ID"),
-                                fieldWithPath("checklistId").description("체크리스트 ID"),
-                                fieldWithPath("content").description("아이템 내용"),
-                                fieldWithPath("completed").description("완료 여부"),
-                                fieldWithPath("createdTime").description("생성일시"),
-                                fieldWithPath("updatedTime").description("수정일시")
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data.id").description("아이템 ID"),
+                                fieldWithPath("data.checklistId").description("체크리스트 ID"),
+                                fieldWithPath("data.content").description("아이템 내용"),
+                                fieldWithPath("data.completed").description("완료 여부"),
+                                fieldWithPath("data.createdTime").description("생성일시"),
+                                fieldWithPath("data.updatedTime").description("수정일시")
                         )));
     }
 
     @Test
     @DisplayName("체크리스트 항목 삭제 API")
     void deleteChecklistItem() throws Exception {
-        mockMvc.perform(delete("/checklists/{checklistId}/items/{itemId}", 1L, 2L))
+        mockMvc.perform(delete("/checklists/{checklistId}/items/{itemId}", 1L, 2L)
+                        .header(AUTH_HEADER, BEARER_TOKEN))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("checklists-items-delete",
                         pathParameters(
                                 parameterWithName("checklistId").description("체크리스트 ID"),
                                 parameterWithName("itemId").description("삭제할 항목 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data").description("결과 메시지")
                         )));
     }
 
@@ -215,6 +242,7 @@ public class ChecklistControllerRestDocsTest {
     @DisplayName("체크리스트 항목 수정 API")
     void updateChecklistItem() throws Exception {
         mockMvc.perform(put("/checklists/{checklistId}/items/{itemId}", 1L, 2L)
+                        .header(AUTH_HEADER, BEARER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -230,19 +258,30 @@ public class ChecklistControllerRestDocsTest {
                         ),
                         requestFields(
                                 fieldWithPath("content").description("수정할 항목 내용")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data").description("결과 메시지")
                         )));
     }
 
     @Test
     @DisplayName("체크리스트 항목 완료 상태 변경 API")
     void completeChecklistItem() throws Exception {
-        mockMvc.perform(patch("/checklists/{checklistId}/items/{itemId}/complete", 1L, 2L))
+        mockMvc.perform(patch("/checklists/{checklistId}/items/{itemId}/complete", 1L, 2L)
+                        .header(AUTH_HEADER, BEARER_TOKEN))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("checklists-items-complete",
                         pathParameters(
                                 parameterWithName("checklistId").description("체크리스트 ID"),
                                 parameterWithName("itemId").description("완료 상태 변경할 항목 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data").description("결과 메시지")
                         )));
     }
 }

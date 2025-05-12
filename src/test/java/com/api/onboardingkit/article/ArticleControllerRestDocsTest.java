@@ -5,6 +5,8 @@ import com.api.onboardingkit.article.dto.ArticleRequestDTO;
 import com.api.onboardingkit.article.dto.ArticleResponseDTO;
 import com.api.onboardingkit.article.dto.ArticleSearchDTO;
 import com.api.onboardingkit.article.service.ArticleService;
+import com.api.onboardingkit.config.JwtAuthenticationFilter;
+import com.api.onboardingkit.config.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,14 +40,20 @@ public class ArticleControllerRestDocsTest {
     @MockBean
     private ArticleService articleService;
 
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Test
-    @DisplayName("아티클 목록 조회 API")
+    @DisplayName("아티클 목록 조회 API - 성공")
     void fetchArticles() throws Exception {
         ArticleResponseDTO response = ArticleResponseDTO.builder()
                 .id(1L)
                 .category("가이드")
                 .subcategory("입사")
-                .postDate(LocalDateTime.now())
+                .postDate(LocalDateTime.parse("2024-03-01T10:00:00"))
                 .source("GZ")
                 .title("제목")
                 .summary("요약")
@@ -64,22 +72,24 @@ public class ArticleControllerRestDocsTest {
                 .andDo(print())
                 .andDo(document("articles-list",
                         responseFields(
-                                fieldWithPath("[].id").description("아티클 ID"),
-                                fieldWithPath("[].category").description("카테고리"),
-                                fieldWithPath("[].subcategory").description("서브카테고리"),
-                                fieldWithPath("[].postDate").description("게시일"),
-                                fieldWithPath("[].source").description("출처"),
-                                fieldWithPath("[].title").description("제목"),
-                                fieldWithPath("[].summary").description("요약"),
-                                fieldWithPath("[].views").description("조회수"),
-                                fieldWithPath("[].thumbnail").description("썸네일 이미지 경로"),
-                                fieldWithPath("[].url").description("기사 링크"),
-                                fieldWithPath("[].hashtags").description("해시태그 리스트")
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data[].id").description("아티클 ID"),
+                                fieldWithPath("data[].category").description("카테고리"),
+                                fieldWithPath("data[].subcategory").description("서브카테고리"),
+                                fieldWithPath("data[].postDate").description("게시일"),
+                                fieldWithPath("data[].source").description("출처"),
+                                fieldWithPath("data[].title").description("제목"),
+                                fieldWithPath("data[].summary").description("요약"),
+                                fieldWithPath("data[].views").description("조회수"),
+                                fieldWithPath("data[].thumbnail").description("썸네일 이미지 경로"),
+                                fieldWithPath("data[].url").description("기사 링크"),
+                                fieldWithPath("data[].hashtags").description("해시태그 리스트")
                         )));
     }
 
     @Test
-    @DisplayName("아티클 생성 API")
+    @DisplayName("아티클 생성 API - 성공")
     void createArticle() throws Exception {
         ArticleRequestDTO request = ArticleRequestDTO.builder()
                 .category("가이드")
@@ -137,22 +147,24 @@ public class ArticleControllerRestDocsTest {
                                 fieldWithPath("url").description("기사 링크")
                         ),
                         responseFields(
-                                fieldWithPath("id").description("아티클 ID"),
-                                fieldWithPath("category").description("카테고리"),
-                                fieldWithPath("subcategory").description("서브카테고리"),
-                                fieldWithPath("postDate").description("게시일"),
-                                fieldWithPath("source").description("출처"),
-                                fieldWithPath("title").description("제목"),
-                                fieldWithPath("summary").description("요약"),
-                                fieldWithPath("views").description("조회수"),
-                                fieldWithPath("thumbnail").description("썸네일"),
-                                fieldWithPath("url").description("기사 링크"),
-                                fieldWithPath("hashtags").description("해시태그 리스트")
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data.id").description("아티클 ID"),
+                                fieldWithPath("data.category").description("카테고리"),
+                                fieldWithPath("data.subcategory").description("서브카테고리"),
+                                fieldWithPath("data.postDate").description("게시일"),
+                                fieldWithPath("data.source").description("출처"),
+                                fieldWithPath("data.title").description("제목"),
+                                fieldWithPath("data.summary").description("요약"),
+                                fieldWithPath("data.views").description("조회수"),
+                                fieldWithPath("data.thumbnail").description("썸네일"),
+                                fieldWithPath("data.url").description("기사 링크"),
+                                fieldWithPath("data.hashtags").description("해시태그 리스트")
                         )));
     }
 
     @Test
-    @DisplayName("아티클 해시태그 추가 API")
+    @DisplayName("아티클 해시태그 추가 API - 성공")
     void addHashtag() throws Exception {
         mockMvc.perform(post("/articles/{id}/hashtags", 1L)
                         .queryParam("hashtag", "온보딩"))
@@ -164,11 +176,16 @@ public class ArticleControllerRestDocsTest {
                         ),
                         queryParameters(
                                 parameterWithName("hashtag").description("추가할 해시태그")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data").description("결과 메시지")
                         )));
     }
 
     @Test
-    @DisplayName("아티클 리다이렉트 API")
+    @DisplayName("아티클 리다이렉트 API - 성공")
     void redirectToSource() throws Exception {
         given(articleService.incrementViewsAndGetUrl(1L))
                 .willReturn("https://example.com");

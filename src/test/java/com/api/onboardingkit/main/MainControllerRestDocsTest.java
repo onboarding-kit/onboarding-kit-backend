@@ -1,5 +1,7 @@
 package com.api.onboardingkit.main;
 
+import com.api.onboardingkit.config.JwtAuthenticationFilter;
+import com.api.onboardingkit.config.JwtTokenProvider;
 import com.api.onboardingkit.main.controller.MainController;
 import com.api.onboardingkit.main.dto.MainArticleDTO;
 import com.api.onboardingkit.main.dto.MainChecklistDTO;
@@ -12,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -23,12 +24,13 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(MainController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @AutoConfigureRestDocs
-class MainControllerRestDocsTest {
+public class MainControllerRestDocsTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -36,73 +38,90 @@ class MainControllerRestDocsTest {
     @MockBean
     private MainService mainService;
 
+    @MockBean
+    private JwtTokenProvider jwtTokenProvider;
+
+    @MockBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    private final String AUTH_HEADER = "Authorization";
+    private final String BEARER_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzQ2NzUwMzkyLCJleHAiOjE3NDY3NTIxOTJ9.at_CI6S-_tsBBbuncKyZeSCFDHV5PetEgi0MVHv7IjQ";
+
     @Test
-    @DisplayName("체크리스트 상태 조회 API")
-    void getChecklistStatus() throws Exception {
-        given(mainService.getMainChecklistStatus()).willReturn(List.of(
-                new MainStatusChecklistDTO("온보딩 준비", 5, 3, 0.6)
-        ));
+    @DisplayName("메인 체크리스트 진행률 조회 API")
+    void getChecklistProgress() throws Exception {
+        MainStatusChecklistDTO dto = new MainStatusChecklistDTO("입사 준비", 5, 3, 60.0);
+
+        given(mainService.getMainChecklistStatus()).willReturn(List.of(dto));
 
         mockMvc.perform(get("/main/checklists/status")
-                        .accept(MediaType.APPLICATION_JSON))
+                        .header(AUTH_HEADER, BEARER_TOKEN))
                 .andExpect(status().isOk())
+                .andDo(print())
                 .andDo(document("main-checklists-status",
                         responseFields(
-                                fieldWithPath("[].title").description("체크리스트 제목"),
-                                fieldWithPath("[].totalItems").description("전체 항목 수"),
-                                fieldWithPath("[].completedItems").description("완료된 항목 수"),
-                                fieldWithPath("[].progress").description("진행률 (0.0 ~ 1.0)")
-                        )
-                ));
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data[].title").description("체크리스트 제목"),
+                                fieldWithPath("data[].totalItems").description("전체 항목 수"),
+                                fieldWithPath("data[].completedItems").description("완료 항목 수"),
+                                fieldWithPath("data[].progress").description("진행률 (%)")
+                        )));
     }
 
     @Test
-    @DisplayName("전체 체크리스트 조회 API")
-    void getChecklist() throws Exception {
-        given(mainService.getMainChecklist()).willReturn(
-                new MainChecklistDTO(
-                        1L,
-                        "온보딩 준비 체크리스트",
-                        List.of(
-                                new MainChecklistItemDTO(1L, "회사 이메일 세팅", LocalDateTime.of(2024, 3, 1, 10, 0)),
-                                new MainChecklistItemDTO(2L, "Slack 가입", LocalDateTime.of(2024, 3, 2, 11, 0))
-                        )
-                )
+    @DisplayName("메인 체크리스트 상세 조회 API")
+    void getMainChecklist() throws Exception {
+        MainChecklistDTO dto = new MainChecklistDTO(
+                1L,
+                "입사 준비",
+                List.of(new MainChecklistItemDTO(10L, "노트북 세팅", LocalDateTime.now()))
         );
 
+        given(mainService.getMainChecklist()).willReturn(dto);
+
         mockMvc.perform(get("/main/checklists")
-                        .accept(MediaType.APPLICATION_JSON))
+                        .header(AUTH_HEADER, BEARER_TOKEN))
                 .andExpect(status().isOk())
-                .andDo(document("main-checklists",
+                .andDo(print())
+                .andDo(document("main-checklists-detail",
                         responseFields(
-                                fieldWithPath("checklistId").description("체크리스트 ID"),
-                                fieldWithPath("checklistTitle").description("체크리스트 제목"),
-                                fieldWithPath("checklistItems[].id").description("체크리스트 항목 ID"),
-                                fieldWithPath("checklistItems[].content").description("체크리스트 항목 내용"),
-                                fieldWithPath("checklistItems[].createdTime").description("체크리스트 항목 생성 시간 (yyyy-MM-dd'T'HH:mm:ss)")
-                        )
-                ));
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data.checklistId").description("체크리스트 ID"),
+                                fieldWithPath("data.checklistTitle").description("체크리스트 제목"),
+                                fieldWithPath("data.checklistItems[].id").description("체크리스트 항목 ID"),
+                                fieldWithPath("data.checklistItems[].content").description("항목 내용"),
+                                fieldWithPath("data.checklistItems[].createdTime").description("생성일시")
+                        )));
     }
 
     @Test
-    @DisplayName("메인 아티클 리스트 조회 API")
-    void getArticles() throws Exception {
-        given(mainService.getMainArticles()).willReturn(List.of(
-                new MainArticleDTO("첫 출근 꿀팁", "입사 첫날을 준비해보자!", "thumb1.jpg", "https://example.com/article1", 123),
-                new MainArticleDTO("사내 커뮤니케이션 가이드", "효과적인 소통법", "thumb2.jpg", "https://example.com/article2", 456)
-        ));
+    @DisplayName("메인 아티클 목록 조회 API")
+    void getMainArticles() throws Exception {
+        MainArticleDTO dto = new MainArticleDTO(
+                "첫 출근 꿀팁",
+                "이 글은 첫 출근을 앞둔 당신에게 도움이 될 것입니다.",
+                "thumb.jpg",
+                "https://example.com",
+                456
+        );
+
+        given(mainService.getMainArticles()).willReturn(List.of(dto));
 
         mockMvc.perform(get("/main/articles")
-                        .accept(MediaType.APPLICATION_JSON))
+                        .header(AUTH_HEADER, BEARER_TOKEN))
                 .andExpect(status().isOk())
+                .andDo(print())
                 .andDo(document("main-articles",
                         responseFields(
-                                fieldWithPath("[].title").description("아티클 제목"),
-                                fieldWithPath("[].summary").description("아티클 요약 설명"),
-                                fieldWithPath("[].thumbnail").description("썸네일 파일명"),
-                                fieldWithPath("[].url").description("아티클 링크 URL"),
-                                fieldWithPath("[].views").description("조회수")
-                        )
-                ));
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data[].title").description("아티클 제목"),
+                                fieldWithPath("data[].summary").description("요약"),
+                                fieldWithPath("data[].thumbnail").description("썸네일 이미지 경로"),
+                                fieldWithPath("data[].url").description("링크 URL"),
+                                fieldWithPath("data[].views").description("조회수")
+                        )));
     }
 }

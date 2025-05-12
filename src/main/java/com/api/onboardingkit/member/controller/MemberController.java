@@ -28,7 +28,7 @@ public class MemberController {
     @PatchMapping
     public CustomResponse<?> updateMyProfile(@Valid @RequestBody MemberRequestDto requestDto){
         memberService.saveOrUpdate(requestDto);
-        return CustomResponse.success(SuccessStatus.UPDATE_MEMBER_OK);
+        return CustomResponse.success("회원 정보가 등록되었습니다.", SuccessStatus.UPDATE_MEMBER_OK);
     }
 
 }
