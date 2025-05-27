@@ -36,15 +36,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Claims claims = jwtTokenProvider.parseClaims(token);
 
             // 사용자 인증 객체 생성
-            String socialId = claims.getSubject();
+            String memberId = claims.getSubject();
             Collection<? extends GrantedAuthority> authorities =
                     List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
             // Authentication 객체 생성 후 등록
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
-                            socialId,         // socialId
-                            claims,           // socialType
+                            memberId,
                             authorities       // 권한
                     );
 
