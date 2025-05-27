@@ -22,7 +22,7 @@ public class MemberController {
     public CustomResponse<Member> getMyProfile() {
         Member member = memberService.getCurrentMember()
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND_FROM_ACCESS_TOKEN));
-        return CustomResponse.success(member, SuccessStatus.GET_MEMBER_BY_EMAIL);
+        return CustomResponse.success(member, SuccessStatus.GET_MEMBER_OK);
     }
 
     @PatchMapping
