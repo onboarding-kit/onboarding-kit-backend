@@ -19,33 +19,29 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @GetMapping
-    public ResponseEntity<CustomResponse<List<ArticleResponseDTO>>> fetchArticles(ArticleSearchDTO searchDTO) {
+    public CustomResponse<?> fetchArticles(ArticleSearchDTO searchDTO) {
         List<ArticleResponseDTO> articles = articleService.fetchArticles(searchDTO);
-        return ResponseEntity.ok(CustomResponse.success(articles, SuccessStatus.SUCCESS));
+        return CustomResponse.success(articles, SuccessStatus.SUCCESS);
     }
 
     @PostMapping
-    public ResponseEntity<CustomResponse<ArticleResponseDTO>> createArticle(
-            @RequestBody ArticleRequestDTO requestDTO
-    ) {
+    public CustomResponse<?> createArticle(@RequestBody ArticleRequestDTO requestDTO) {
         ArticleResponseDTO createdArticle = articleService.createArticle(requestDTO);
-        return ResponseEntity.ok(CustomResponse.success(createdArticle, SuccessStatus.SUCCESS));
+        return CustomResponse.success(createdArticle, SuccessStatus.SUCCESS);
     }
 
     @GetMapping("/{id}/redirect")
-    public ResponseEntity<Void> redirectToSource(
-            @PathVariable Long id
-    ) {
+    public ResponseEntity<Void> redirectToSource(@PathVariable Long id) {
         String url = articleService.incrementViewsAndGetUrl(id);
-        return ResponseEntity.status(302).header("Location", url).build();
+        return ResponseEntity.status(302).header("Location", url).build(); // 그대로 유지
     }
 
     @PostMapping("/{id}/hashtags")
-    public ResponseEntity<CustomResponse<String>> addHashtag(
+    public CustomResponse<?> addHashtag(
             @PathVariable Long id,
             @RequestParam(required = false) String hashtag
     ) {
         articleService.addHashtagToArticle(id, hashtag);
-        return ResponseEntity.ok(CustomResponse.success("해시태그가 성공적으로 추가되었습니다.", SuccessStatus.SUCCESS));
+        return CustomResponse.success("해시태그가 성공적으로 추가되었습니다.", SuccessStatus.SUCCESS);
     }
 }

@@ -22,17 +22,17 @@ public class MainController {
     private final MainService mainService;
 
     @GetMapping("/checklists/status")
-    public ResponseEntity<CustomResponse<List<MainStatusChecklistDTO>>> getChecklistProgress() {
-        return ResponseEntity.ok(CustomResponse.success(mainService.getMainChecklistStatus(), SuccessStatus.SUCCESS));
+    public CustomResponse<?> getChecklistProgress() {
+        return CustomResponse.success(mainService.getMainChecklistStatus(), SuccessStatus.SUCCESS);
     }
 
     @GetMapping("/checklists")
-    public ResponseEntity<CustomResponse<MainChecklistDTO>> getMainChecklist() {
-        return ResponseEntity.ok(CustomResponse.success(mainService.getMainChecklist(), SuccessStatus.SUCCESS));
+    public CustomResponse<?> getMainChecklist() {
+        return CustomResponse.success(mainService.getMainChecklist(), SuccessStatus.SUCCESS);
     }
 
     @GetMapping("/articles")
-    public ResponseEntity<CustomResponse<List<MainArticleDTO>>> getMainArticles() {
-        return ResponseEntity.ok(CustomResponse.success(mainService.getMainArticles(), SuccessStatus.SUCCESS));
+    public CustomResponse<?> getMainArticles() {
+        return CustomResponse.success(mainService.getMainArticles(), SuccessStatus.SUCCESS);
     }
 }

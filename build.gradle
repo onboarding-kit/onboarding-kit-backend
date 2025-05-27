@@ -36,8 +36,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib" // todo. jvm 맞춤 코틀린
-    implementation "org.jetbrains.kotlin:kotlin-reflect" // todo. 코틀린 리플렉션 추가
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "org.jetbrains.kotlin:kotlin-reflect"
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2:2.2.224'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -81,10 +82,6 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         jvmTarget = "17"
         freeCompilerArgs = ["-Xjsr305=strict"]
     }
-}
-
-tasks.withType(Test).configureEach {
-    enabled = false
 }
 
 tasks.named('build') {
