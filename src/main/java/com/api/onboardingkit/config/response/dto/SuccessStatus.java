@@ -11,9 +11,10 @@ public enum SuccessStatus {
     SUCCESS(200,"성공"),
     //oauth
     OAUTH_AUTHENTICATION(200, "소셜 액세스 토큰 인증 성공"),
+    TOKEN_REISSUE_OK(200,"토큰 재발급 성공"),
 
     //member
-    GET_MEMBER_BY_EMAIL(200,"이메일로 멤버 객체 추출 성공"),
+    GET_MEMBER_OK(200,"멤버 조회 성공"),
     UPDATE_MEMBER_OK(200,"회원 정보가 등록되었습니다.");
 
     private final int code;

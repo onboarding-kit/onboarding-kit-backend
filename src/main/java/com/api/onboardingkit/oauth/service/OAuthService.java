@@ -1,14 +1,12 @@
 package com.api.onboardingkit.oauth.service;
 
 import com.api.onboardingkit.config.JwtTokenProvider;
-import com.api.onboardingkit.config.response.dto.CustomResponse;
-import com.api.onboardingkit.config.response.dto.SuccessStatus;
+import com.api.onboardingkit.config.exception.CustomException;
+import com.api.onboardingkit.config.exception.ErrorCode;
 import com.api.onboardingkit.member.entity.Member;
 import com.api.onboardingkit.member.entity.SocialType;
 import com.api.onboardingkit.member.repository.MemberRepository;
-import com.api.onboardingkit.oauth.dto.OAuthRequestDto;
-import com.api.onboardingkit.oauth.dto.OAuthResponseDto;
-import com.api.onboardingkit.oauth.dto.SocialUserInfo;
+import com.api.onboardingkit.oauth.dto.*;
 import com.api.onboardingkit.oauth.provider.OAuthProvider;
 import com.api.onboardingkit.oauth.provider.OAuthProviderFactory;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +20,7 @@ public class OAuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
 
-    public CustomResponse<OAuthResponseDto> authenticate(OAuthRequestDto oAuthRequestDto) {
+    public OAuthResponseDto authenticate(OAuthRequestDto oAuthRequestDto) {
         // 요청받은 OAuth Provider 추출
         OAuthProvider provider = oAuthProviderFactory.getProvider(oAuthRequestDto.getSocialType());
 
@@ -46,9 +44,35 @@ public class OAuthService {
         String accessToken = jwtTokenProvider.generateToken(String.valueOf(member.getId()));
         String refreshToken = jwtTokenProvider.generateRefreshToken(String.valueOf(member.getId()));
 
-        return CustomResponse.success(
-                new OAuthResponseDto(accessToken, refreshToken),
-                SuccessStatus.OAUTH_AUTHENTICATION
-        );
+        member.setRefreshToken(refreshToken);
+        memberRepository.save(member);
+
+        return new OAuthResponseDto(accessToken, refreshToken);
+    }
+
+    public TokenResponseDto reissueToken(TokenReissueRequestDto requestDto) {
+
+        // refresh 토큰 유효성 확인
+        if (!jwtTokenProvider.validateToken(requestDto.getRefreshToken())) {
+            throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+
+        // claims에서 memberId 추출
+        Long memberId = Long.valueOf(jwtTokenProvider.getMemberIdFromToken(requestDto.getRefreshToken()));
+
+        // DB에 저장된 refresh 토큰과 비교
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        if (!requestDto.getRefreshToken().equals(member.getRefreshToken())) {
+            throw new CustomException(ErrorCode.REFRESH_TOKEN_MISMATCH);
+        }
+
+        // 새 토큰 발급 및 저장
+        String newAccessToken = jwtTokenProvider.generateToken(String.valueOf(member.getId()));
+        String newRefreshToken = jwtTokenProvider.generateRefreshToken(String.valueOf(member.getId()));
+        member.setRefreshToken(newRefreshToken);
+        memberRepository.save(member);
+
+        return new TokenResponseDto(newAccessToken, newRefreshToken);
     }
 }
