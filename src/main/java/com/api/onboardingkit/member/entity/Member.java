@@ -22,6 +22,9 @@ public class Member {
     private String detailRole;  // 상세 직무
     private int experience; // 연차
 
+    @Setter
+    private String refreshToken;
+
     @Enumerated(EnumType.STRING)
     @Column(columnDefinition = "VARCHAR(10)") // ENUM 대신 문자열 저장
     private SocialType socialType; // GOOGLE, KAKAO, APPLE
