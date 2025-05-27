@@ -8,6 +8,7 @@ import com.api.onboardingkit.oauth.dto.TokenReissueRequestDto;
 import com.api.onboardingkit.oauth.dto.TokenResponseDto;
 import com.api.onboardingkit.oauth.service.OAuthService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,14 +22,14 @@ public class OAuthController {
     private final OAuthService oAuthService;
 
     @PostMapping("/login")
-    public CustomResponse<OAuthResponseDto> OAuth2Login(@RequestBody OAuthRequestDto requestDto) {
+    public ResponseEntity<CustomResponse<OAuthResponseDto>> OAuth2Login(@RequestBody OAuthRequestDto requestDto) {
         OAuthResponseDto responseDto = oAuthService.authenticate(requestDto);
-        return CustomResponse.success(responseDto, SuccessStatus.OAUTH_AUTHENTICATION);
+        return ResponseEntity.ok(CustomResponse.success(responseDto, SuccessStatus.OAUTH_AUTHENTICATION));
     }
 
     @PostMapping("/reissue")
-    public CustomResponse<TokenResponseDto> reissue(@RequestBody TokenReissueRequestDto requestDto) {
+    public ResponseEntity<CustomResponse<TokenResponseDto>> reissue(@RequestBody TokenReissueRequestDto requestDto) {
         TokenResponseDto response = oAuthService.reissueToken(requestDto);
-        return CustomResponse.success(response, SuccessStatus.TOKEN_REISSUE_OK);
+        return ResponseEntity.ok(CustomResponse.success(response, SuccessStatus.TOKEN_REISSUE_OK));
     }
 }
