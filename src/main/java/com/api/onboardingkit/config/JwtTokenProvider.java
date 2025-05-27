@@ -24,7 +24,7 @@ import io.jsonwebtoken.security.Keys;
 public class JwtTokenProvider {
     private String secret;
     private Key key;
-    private static final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 30; //30분
+    private static final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 5; // 5시간
     private static final long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7; // 7일
 
     @PostConstruct
@@ -64,14 +64,9 @@ public class JwtTokenProvider {
         }
     }
 
-    public String getSocialIdFromToken(String token) {
+    public String getMemberIdFromToken(String token) {
         Claims claims = parseClaims(token);
-        return claims.getSubject(); // sub, socialId 값
-    }
-
-    public String getSocialTypeFromToken(String token) {
-        Claims claims = parseClaims(token);
-        return claims.get("socialType", String.class); // socialType(provider) 값
+        return claims.getSubject(); // sub, memberId 값
     }
 
     public Claims parseClaims(String token) {

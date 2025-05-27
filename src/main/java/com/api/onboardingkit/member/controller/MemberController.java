@@ -9,6 +9,7 @@ import com.api.onboardingkit.member.entity.Member;
 import com.api.onboardingkit.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -19,16 +20,16 @@ public class MemberController {
     private final MemberService memberService;
 
     @GetMapping("/me")
-    public CustomResponse<Member> getMyProfile() {
+    public ResponseEntity<CustomResponse<Member>> getMyProfile() {
         Member member = memberService.getCurrentMember()
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND_FROM_ACCESS_TOKEN));
-        return CustomResponse.success(member, SuccessStatus.GET_MEMBER_BY_EMAIL);
+        return ResponseEntity.ok(CustomResponse.success(member, SuccessStatus.GET_MEMBER_OK));
     }
 
     @PatchMapping
-    public CustomResponse<?> updateMyProfile(@Valid @RequestBody MemberRequestDto requestDto){
+    public ResponseEntity<CustomResponse<?>> updateMyProfile(@Valid @RequestBody MemberRequestDto requestDto){
         memberService.saveOrUpdate(requestDto);
-        return CustomResponse.success("회원 정보가 등록되었습니다.", SuccessStatus.UPDATE_MEMBER_OK);
+        return ResponseEntity.ok(CustomResponse.success(SuccessStatus.UPDATE_MEMBER_OK));
     }
 
 }
