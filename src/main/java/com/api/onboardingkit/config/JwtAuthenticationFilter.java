@@ -1,5 +1,7 @@
 package com.api.onboardingkit.config;
 
+import com.api.onboardingkit.config.exception.CustomException;
+import com.api.onboardingkit.config.exception.ErrorCode;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -17,6 +19,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+import static com.api.onboardingkit.config.response.dto.CustomResponseUtils.writeErrorResponse;
+
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -24,40 +28,62 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.startsWith("/onboardingkit/api/oauth") ||
+                path.startsWith("/onboardingkit/api/h2") ||
+                path.startsWith("/onboardingkit/api/docs") ||
+                path.startsWith("/onboardingkit/api/swagger-ui") ||
+                path.startsWith("/onboardingkit/api/v3/api-docs");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        String token = resolveToken(request);
+        String bearerToken = request.getHeader("Authorization");
 
-        // 토큰 유효성 검사, claim 추출
-        if (token != null && jwtTokenProvider.validateToken(token)) {
+        // 토큰 유무 확인 및 형식 확인
+        if (bearerToken == null) {
+            writeErrorResponse(response, ErrorCode.NOT_FOUND_AUTHORIZATION_HEADER);
+            return;
+        }
+
+        if (!bearerToken.startsWith("Bearer ")) {
+            writeErrorResponse(response, ErrorCode.NULL_POINT_HEADER_REQUEST);
+            return;
+        }
+
+        String token = bearerToken.substring(7);
+
+        try{
+            // 토큰 유효성 검사, claim 추출
+            jwtTokenProvider.validateToken(token);
+
             Claims claims = jwtTokenProvider.parseClaims(token);
 
             // 사용자 인증 객체 생성
-            String memberId = claims.getSubject();
+            String phoneNum = claims.getSubject();
             Collection<? extends GrantedAuthority> authorities =
                     List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
             // Authentication 객체 생성 후 등록
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
-                            memberId,
+                            phoneNum,         // 전화번호
+                            claims,           // memberId
                             authorities       // 권한
                     );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (CustomException e) {
+            writeErrorResponse(response, e.getErrorCode());
+            return;
         }
 
         filterChain.doFilter(request, response);
     }
 
-    private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        }
-        return null;
-    }
 }
