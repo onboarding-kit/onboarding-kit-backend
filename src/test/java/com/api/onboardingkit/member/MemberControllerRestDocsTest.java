@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Optional;
@@ -59,6 +60,7 @@ public class MemberControllerRestDocsTest {
                 .experience(3)
                 .socialType(SocialType.KAKAO)
                 .socialId("kakao-112233")
+                .refreshToken(null)
                 .build();
 
         given(memberService.getCurrentMember()).willReturn(Optional.of(member));
@@ -78,6 +80,7 @@ public class MemberControllerRestDocsTest {
                                 fieldWithPath("data.role").description("직무 (ex. 백엔드)"),
                                 fieldWithPath("data.detailRole").description("상세 직무"),
                                 fieldWithPath("data.experience").description("연차 (숫자)"),
+                                fieldWithPath("data.refreshToken").description("리프레시 토큰 (nullable)"),
                                 fieldWithPath("data.socialType").description("소셜 로그인 유형 (google, kakao, apple)"),
                                 fieldWithPath("data.socialId").description("소셜 ID")
                         )));
@@ -90,13 +93,13 @@ public class MemberControllerRestDocsTest {
                         .header(AUTH_HEADER, BEARER_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                    "nickname": "온보딩러",
-                                    "role": "백엔드",
-                                    "detailRole": "API개발",
-                                    "experience": 3
-                                }
-                                """))
+                            {
+                                "nickname": "온보딩러",
+                                "role": "백엔드",
+                                "detailRole": "API개발",
+                                "experience": 3
+                            }
+                            """))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("member-update-profile",
@@ -108,8 +111,9 @@ public class MemberControllerRestDocsTest {
                         ),
                         responseFields(
                                 fieldWithPath("code").description("응답 코드"),
-                                fieldWithPath("message").description("응답 메시지"),
-                                fieldWithPath("data").description("결과 메시지")
-                        )));
+                                fieldWithPath("message").description("응답 메시지")
+                        )
+                ));
     }
+
 }
