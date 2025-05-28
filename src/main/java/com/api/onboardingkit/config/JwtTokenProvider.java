@@ -3,10 +3,7 @@ package com.api.onboardingkit.config;
 import com.api.onboardingkit.config.exception.CustomException;
 import com.api.onboardingkit.config.exception.ErrorCode;
 import io.github.cdimascio.dotenv.Dotenv;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -59,8 +56,14 @@ public class JwtTokenProvider {
         try{
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            throw new CustomException(ErrorCode.JWT_EXPIRED);
+        } catch (MalformedJwtException e) {
+            throw new CustomException(ErrorCode.JWT_PARSING_FAILED);
+        } catch (SignatureException e) {
+            throw new CustomException(ErrorCode.INVALID_JWT_TOKEN);
         } catch (JwtException | IllegalArgumentException e) {
-            throw new CustomException(ErrorCode.TOKEN_VALIDATE_FAILED);
+            throw new CustomException(ErrorCode.JWT_PARSING_FAILED);
         }
     }
 

@@ -23,10 +23,10 @@ public class CustomResponse<T> {
     }
 
     public static CustomResponse<Object> failure(ErrorCode errorCode) {
-        return new CustomResponse<>(errorCode.getCode(), errorCode.getMessage(), new Object());
+        return new CustomResponse<>(errorCode.getCode(), errorCode.getMessage(), null);
     }
 
     public static CustomResponse<Object> failure(int code, String message) {
-        return new CustomResponse<>(code, message, new Object());
+        return new CustomResponse<>(code, message, null);
     }
 }
