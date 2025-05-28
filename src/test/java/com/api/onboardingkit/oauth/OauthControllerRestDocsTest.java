@@ -51,7 +51,7 @@ public class OauthControllerRestDocsTest {
         // given
         OAuthResponseDto responseDto = new OAuthResponseDto("access-token", "refresh-token");
         given(oAuthService.authenticate(any(OAuthRequestDto.class)))
-                .willReturn(CustomResponse.success(responseDto, SuccessStatus.OAUTH_AUTHENTICATION));
+                .willReturn(responseDto);
 
         // when
         mockMvc.perform(post("/oauth/login")
