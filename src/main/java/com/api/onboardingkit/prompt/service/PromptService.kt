@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.RestTemplate
 import org.springframework.http.*
 import java.time.LocalDateTime
+import io.github.cdimascio.dotenv.Dotenv
 
 @Service
 class PromptService(
@@ -19,7 +20,9 @@ class PromptService(
 ) : AbstractService() {
 
     private val OPENAI_API_URL = "https://api.openai.com/v1/chat/completions"
-    private val OPENAI_API_KEY = "OPENAI_API_KEY"
+    private val dotenv = Dotenv.load()
+    private val OPENAI_API_KEY = dotenv["OPENAI_API_KEY"]
+        ?: throw IllegalStateException("OPENAI_API_KEY 환경 변수가 .env에 없습니다.")
 
     @Transactional
     fun createSession(): PromptSession {
