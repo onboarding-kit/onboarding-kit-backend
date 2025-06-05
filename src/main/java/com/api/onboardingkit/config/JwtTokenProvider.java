@@ -6,6 +6,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,14 +16,17 @@ import java.util.Date;
 
 import io.jsonwebtoken.security.Keys;
 
+@Getter
+@Setter
 @Configuration
 @ConfigurationProperties(prefix = "jwt")
-@Getter
 public class JwtTokenProvider {
+
     private String secret;
     private Key key;
-    private static final long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 5; // 5시간
-    private static final long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7; // 7일
+
+    private long accessTokenExpiration;
+    private long refreshTokenExpiration;
 
     @PostConstruct
     public void init() {
@@ -36,11 +40,11 @@ public class JwtTokenProvider {
     }
 
     public String generateToken(String memberId) {
-        return createToken(memberId, ACCESS_TOKEN_EXPIRATION);
+        return createToken(memberId, accessTokenExpiration);
     }
 
     public String generateRefreshToken(String memberId) {
-        return createToken(memberId, REFRESH_TOKEN_EXPIRATION);
+        return createToken(memberId, refreshTokenExpiration);
     }
 
     private String createToken(String memberId, long expiration) {
