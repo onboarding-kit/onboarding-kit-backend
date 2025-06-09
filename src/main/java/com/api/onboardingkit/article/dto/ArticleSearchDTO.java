@@ -3,6 +3,7 @@ package com.api.onboardingkit.article.dto;
 import lombok.*;
 
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
