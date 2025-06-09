@@ -19,7 +19,7 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @GetMapping
-    public CustomResponse<?> fetchArticles(ArticleSearchDTO searchDTO) {
+    public CustomResponse<?> fetchArticles(@ModelAttribute ArticleSearchDTO searchDTO) {
         List<ArticleResponseDTO> articles = articleService.fetchArticles(searchDTO);
         return CustomResponse.success(articles, SuccessStatus.SUCCESS);
     }
