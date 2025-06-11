@@ -12,8 +12,8 @@ import java.util.List;
 @AllArgsConstructor
 public class ArticleResponseDTO {
     private Long id;
-    private String category;
-    private String subcategory;
+    private Long categoryId;
+    private Long subcategoryId;
     private LocalDateTime postDate;
     private String source;
     private String title;
@@ -25,8 +25,8 @@ public class ArticleResponseDTO {
 
     public ArticleResponseDTO(Article article, List<String> hashtags) {
         this.id = article.getId();
-        this.category = article.getCategory();
-        this.subcategory = article.getSubcategory();
+        this.categoryId = article.getCategoryId();
+        this.subcategoryId = article.getSubcategoryId();
         this.postDate = article.getPostDate();
         this.source = article.getSource();
         this.title = article.getTitle();

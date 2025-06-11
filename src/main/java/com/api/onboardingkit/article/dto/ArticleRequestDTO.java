@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ArticleRequestDTO {
-    private String category;
-    private String subcategory;
+    private Long categoryId;
+    private Long subcategoryId;
     private LocalDateTime postDate;
     private String source;
     private String title;
