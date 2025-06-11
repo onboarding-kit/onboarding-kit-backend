@@ -1,5 +1,6 @@
 package com.api.onboardingkit.prompt.service
 
+import com.api.onboardingkit.checklist.service.ChecklistDraftService
 import com.api.onboardingkit.config.AbstractService
 import com.api.onboardingkit.prompt.entity.PromptMessage
 import com.api.onboardingkit.prompt.entity.PromptSession
@@ -11,14 +12,18 @@ import org.springframework.web.client.RestTemplate
 import org.springframework.http.*
 import java.time.LocalDateTime
 import io.github.cdimascio.dotenv.Dotenv
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 @Service
 class PromptService(
     private val promptSessionRepository: PromptSessionRepository,
     private val promptMessageRepository: PromptMessageRepository,
+    private val checklistDraftService: ChecklistDraftService,
     private val restTemplate: RestTemplate
 ) : AbstractService() {
 
+    private val log: Logger = LoggerFactory.getLogger(this::class.java)
     private val OPENAI_API_URL = "https://api.openai.com/v1/chat/completions"
     private val dotenv = Dotenv.load()
     private val OPENAI_API_KEY = dotenv["OPENAI_API_KEY"]
@@ -38,7 +43,7 @@ class PromptService(
         }
 
         val session = PromptSession(
-            id = gptSessionId,  // 🔹 `sessionId` → `id` 변경
+            id = gptSessionId,
             userNo = getMemberId()
         )
 
@@ -57,6 +62,7 @@ class PromptService(
         val session = promptSessionRepository.findById(sessionId)
             .orElseThrow { IllegalArgumentException("세션을 찾을 수 없습니다.") }
 
+        // 1. 사용자 메시지 저장
         val userMessageEntity = PromptMessage(
             sessionId = session.id,
             messageText = userMessage,
@@ -65,15 +71,37 @@ class PromptService(
         )
         promptMessageRepository.save(userMessageEntity)
 
-        val gptResponse = callGptApi(sessionId, userMessage)
+        // 2. 메시지에 "체크리스트"가 포함되어 있으면 GPT에게 명시적으로 요청
+        val shouldIntercept = userMessage.contains("체크리스트")
+        val messageForGpt = if (shouldIntercept) {
+            "$userMessage\n\n체크리스트는 HTML <ul><li> 태그로 구성해줘."
+        } else userMessage
 
+        val gptResponse = callGptApi(sessionId, messageForGpt)
+
+        // 3. 체크리스트 응답이면 가로채서 Redis 저장
+        val checklistItems = parseChecklistItemsFromHtml(gptResponse)
+
+        val finalMessageText = if (shouldIntercept && checklistItems.isNotEmpty()) {
+            val draftId = checklistDraftService.saveDraft(sessionId, checklistItems)
+            "/checklists/drafts/$draftId"
+        } else {
+            gptResponse
+        }
+
+        // 4. GPT 메시지 저장
         val botMessageEntity = PromptMessage(
             sessionId = session.id,
-            messageText = gptResponse,
+            messageText = finalMessageText,
             isUser = false,
             timestamp = LocalDateTime.now()
         )
         return promptMessageRepository.save(botMessageEntity)
+    }
+
+    fun parseChecklistItemsFromHtml(html: String): List<String> {
+        val regex = Regex("""<li>(.*?)</li>""", RegexOption.DOT_MATCHES_ALL)
+        return regex.findAll(html).map { it.groupValues[1].trim() }.toList()
     }
 
     private fun requestGptSessionId(): String {

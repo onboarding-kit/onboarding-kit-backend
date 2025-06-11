@@ -13,7 +13,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ChecklistDraftService {
 
-    private final RedisTemplate<String, Object> checklistDraftRedisTemplate;
+    private final RedisTemplate<String, ChecklistDraft> checklistDraftRedisTemplate;
 
     private static final Duration TTL = Duration.ofMinutes(30);
 
@@ -25,15 +25,12 @@ public class ChecklistDraftService {
     }
 
     public ChecklistDraft getDraft(String draftId) {
-        Object raw = checklistDraftRedisTemplate.opsForValue().get(draftKey(draftId));
-        if (raw == null || !(raw instanceof ChecklistDraft)) {
+        String key = draftKey(draftId);
+        ChecklistDraft raw = checklistDraftRedisTemplate.opsForValue().get(key);
+        if (raw == null) {
             throw new IllegalArgumentException("해당 임시 체크리스트가 존재하지 않습니다.");
         }
-        return (ChecklistDraft) raw;
-    }
-
-    public void deleteDraft(String draftId) {
-        checklistDraftRedisTemplate.delete(draftKey(draftId));
+        return raw;
     }
 
     private String draftKey(String draftId) {

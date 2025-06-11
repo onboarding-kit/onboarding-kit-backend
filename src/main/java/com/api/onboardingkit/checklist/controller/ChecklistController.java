@@ -77,29 +77,10 @@ public class ChecklistController {
         return CustomResponse.success("체크리스트 아이템 완료 상태가 변경되었습니다.", SuccessStatus.SUCCESS);
     }
 
-    @PostMapping("/drafts")
-    public CustomResponse<?> saveDraft(@RequestBody ChecklistDraftRequestDTO requestDTO) {
-        String draftId = checklistDraftService.saveDraft(requestDTO.getSessionId(), requestDTO.getItems());
-        return CustomResponse.success(draftId, SuccessStatus.SUCCESS);
-    }
-
-    @PostMapping("/drafts/{draftId}/finalize")
-    public CustomResponse<?> finalizeChecklist(
-            @PathVariable String draftId,
-            @RequestBody ChecklistFinalizeRequestDTO requestDTO
-    ) {
+    @GetMapping("/drafts/{draftId}")
+    public CustomResponse<?> getDraft(@PathVariable String draftId) {
         ChecklistDraft draft = checklistDraftService.getDraft(draftId);
-
-        ChecklistRequestDTO checklistRequestDTO = new ChecklistRequestDTO(requestDTO.getTitle());
-        Long checklistId = checklistService.createChecklist(checklistRequestDTO).getId();
-
-        for (String item : draft.getItems()) {
-            checklistService.addChecklistItem(checklistId, new ChecklistItemRequestDTO(item));
-        }
-
-        checklistDraftService.deleteDraft(draftId);
-
-        return CustomResponse.success(checklistId, SuccessStatus.SUCCESS);
+        return CustomResponse.success(draft.getItems(), SuccessStatus.SUCCESS);
     }
 
 }
