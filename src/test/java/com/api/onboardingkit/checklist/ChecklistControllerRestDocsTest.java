@@ -314,4 +314,55 @@ public class ChecklistControllerRestDocsTest {
                         )));
     }
 
+    @Test
+    @DisplayName("체크리스트 제목 + 아이템 한번에 생성 API")
+    void composeChecklist() throws Exception {
+        // given
+        ChecklistResponseDTO response = ChecklistResponseDTO.builder()
+                .id(1L)
+                .userNo(100L)
+                .title("오늘 업무")
+                .createdTime(LocalDateTime.now())
+                .updatedTime(LocalDateTime.now())
+                .build();
+
+        given(checklistService.composeChecklist(any(ChecklistWithItemsRequestDTO.class)))
+                .willReturn(response);
+
+        // when & then
+        mockMvc.perform(post("/checklists/compose")
+                        .header(AUTH_HEADER, BEARER_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                                "title": "오늘 업무",
+                                "items": [
+                                    "09:00 - 10:30: 회의1 (프로젝트 브리핑)",
+                                    "11:00 - 12:00: 회의2 (팀 미팅)",
+                                    "12:00 - 13:00: 점심시간",
+                                    "13:00 - 14:30: 회의3 (클라이언트와의 미팅)",
+                                    "14:30 - 16:00: 업무1 (보고서 작성)",
+                                    "16:00 - 17:00: 업무2 (이메일 확인 및 답변)",
+                                    "17:00 - 18:00: 업무3 (내일 일정 계획)"
+                                ]
+                            }
+                            """))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("checklists-compose",
+                        requestFields(
+                                fieldWithPath("title").description("체크리스트 제목"),
+                                fieldWithPath("items[]").description("체크리스트 항목 문자열 리스트")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data.id").description("체크리스트 ID"),
+                                fieldWithPath("data.userNo").description("사용자 번호"),
+                                fieldWithPath("data.title").description("체크리스트 제목"),
+                                fieldWithPath("data.createdTime").description("생성일시"),
+                                fieldWithPath("data.updatedTime").description("수정일시")
+                        )));
+    }
+
 }

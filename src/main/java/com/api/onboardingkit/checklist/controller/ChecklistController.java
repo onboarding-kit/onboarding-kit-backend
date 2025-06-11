@@ -83,4 +83,8 @@ public class ChecklistController {
         return CustomResponse.success(draft.getItems(), SuccessStatus.SUCCESS);
     }
 
+    @PostMapping("/compose")
+    public CustomResponse<?> composeChecklist(@RequestBody ChecklistWithItemsRequestDTO requestDTO) {
+        return CustomResponse.success(checklistService.composeChecklist(requestDTO),SuccessStatus.SUCCESS);
+    }
 }
