@@ -1,12 +1,12 @@
 package com.api.onboardingkit.article.service;
 
+import com.api.onboardingkit.article.dto.*;
+import com.api.onboardingkit.article.entity.Category;
 import com.api.onboardingkit.article.repository.ArticleRepository;
+import com.api.onboardingkit.article.repository.CategoryRepository;
 import com.api.onboardingkit.article.repository.HashtagRepository;
-import com.api.onboardingkit.article.dto.ArticleRequestDTO;
-import com.api.onboardingkit.article.dto.ArticleResponseDTO;
 import com.api.onboardingkit.article.entity.Article;
 import com.api.onboardingkit.article.entity.Hashtag;
-import com.api.onboardingkit.article.dto.ArticleSearchDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,11 +21,12 @@ public class ArticleService {
 
     private final ArticleRepository articleRepository;
     private final HashtagRepository hashtagRepository;
+    private final CategoryRepository categoryRepository;
 
     public List<ArticleResponseDTO> fetchArticles(ArticleSearchDTO searchDTO) {
         List<Article> articles = articleRepository.findArticles(
-                searchDTO.getCategory(),
-                searchDTO.getSubcategory(),
+                searchDTO.getCategoryId(),
+                searchDTO.getSubcategoryId(),
                 searchDTO.getTitle(),
                 searchDTO.getSortBy()
         );
@@ -46,8 +47,8 @@ public class ArticleService {
             ArticleRequestDTO requestDTO
     ) {
         Article article = Article.builder()
-                .category(requestDTO.getCategory())
-                .subcategory(requestDTO.getSubcategory())
+                .categoryId(requestDTO.getCategoryId())
+                .subcategoryId(requestDTO.getSubcategoryId())
                 .postDate(requestDTO.getPostDate())
                 .source(requestDTO.getSource())
                 .title(requestDTO.getTitle())
@@ -55,7 +56,7 @@ public class ArticleService {
                 .thumbnail(requestDTO.getThumbnail())
                 .url(requestDTO.getUrl())
                 .views(0)
-                .createdTime(LocalDateTime.now()) // todo. requestDTO.getPostDate() 받는 부분 등록될때의 시간으로 변경
+                .createdTime(LocalDateTime.now())
                 .build();
 
         return ArticleResponseDTO.fromEntity(articleRepository.save(article), List.of());
@@ -68,7 +69,7 @@ public class ArticleService {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 아티클이 존재하지 않습니다: " + id));
 
-        article.incrementViews(); // todo. 별도 메서드 활용
+        article.incrementViews();
         return article.getUrl();
     }
 
@@ -111,4 +112,24 @@ public class ArticleService {
         hashtagRepository.save(hashtag);
     }
 
+    @Transactional
+    public CategoryResponseDTO createCategories(
+            CategoryRequestDTO requestDTO
+    ) {
+        Category category = Category.builder()
+                .categoryName(requestDTO.getCategoryName())
+                .depth(requestDTO.getDepth())
+                .parentId(requestDTO.getParentId())
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        return CategoryResponseDTO.fromEntity(categoryRepository.save(category));
+    }
+
+    public List<CategoryResponseDTO> getCategories(){
+        List<Category> categories = categoryRepository.findAll();
+        return categories.stream()
+                .map(CategoryResponseDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
 }

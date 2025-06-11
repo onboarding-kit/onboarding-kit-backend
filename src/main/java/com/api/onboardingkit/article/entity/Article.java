@@ -16,8 +16,8 @@ public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String category;
-    private String subcategory;
+    private Long categoryId;
+    private Long subcategoryId;
     private LocalDateTime postDate; //todo. localdata 이유가 있는지 궁금, @Column(name = "post_date") 도
     private LocalDateTime createdTime;
     private String source;

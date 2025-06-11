@@ -13,16 +13,16 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     @Query("""
         SELECT a FROM Article a 
-        WHERE (:#{#category} IS NULL OR a.category = :category) 
-          AND (:#{#subcategory} IS NULL OR a.subcategory = :subcategory) 
-          AND (:#{#title} IS NULL OR a.title LIKE %:title%) 
+        WHERE a.categoryId = :categoryId
+          AND a.subcategoryId = :subcategoryId
+          AND (:title IS NULL OR a.title LIKE %:title%)
         ORDER BY 
           CASE WHEN :sortBy = 'latest' THEN a.postDate ELSE NULL END DESC, 
           CASE WHEN :sortBy = 'popular' THEN a.views ELSE 0 END DESC
     """)
     List<Article> findArticles(
-            @Param("category") String category,
-            @Param("subcategory") String subcategory,
+            @Param("categoryId") Long categoryId,
+            @Param("subcategoryId") Long subcategoryId,
             @Param("title") String title,
             @Param("sortBy") String sortBy
     );
