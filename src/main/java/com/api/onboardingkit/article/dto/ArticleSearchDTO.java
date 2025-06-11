@@ -8,8 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ArticleSearchDTO {
-    private String category;
-    private String subcategory;
+    private Long categoryId;
+    private Long subcategoryId;
     private String title;
     private String sortBy;
 }
