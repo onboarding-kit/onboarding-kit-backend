@@ -1,6 +1,8 @@
 package com.api.onboardingkit.checklist.controller;
 
+import com.api.onboardingkit.checklist.draft.ChecklistDraft;
 import com.api.onboardingkit.checklist.dto.*;
+import com.api.onboardingkit.checklist.service.ChecklistDraftService;
 import com.api.onboardingkit.checklist.service.ChecklistService;
 import com.api.onboardingkit.config.response.dto.CustomResponse;
 import com.api.onboardingkit.config.response.dto.SuccessStatus;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class ChecklistController {
 
     private final ChecklistService checklistService;
+    private final ChecklistDraftService checklistDraftService;
 
     @GetMapping
     public CustomResponse<?> getUserChecklists() {
@@ -73,4 +76,11 @@ public class ChecklistController {
         checklistService.completeChecklistItem(checklistId, itemId);
         return CustomResponse.success("체크리스트 아이템 완료 상태가 변경되었습니다.", SuccessStatus.SUCCESS);
     }
+
+    @GetMapping("/drafts/{draftId}")
+    public CustomResponse<?> getDraft(@PathVariable String draftId) {
+        ChecklistDraft draft = checklistDraftService.getDraft(draftId);
+        return CustomResponse.success(draft.getItems(), SuccessStatus.SUCCESS);
+    }
+
 }

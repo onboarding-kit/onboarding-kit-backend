@@ -30,3 +30,5 @@ logging:
   level:
     root: WARN
     org.springframework: INFO
+    org.springframework.data.redis: DEBUG
+    io.lettuce.core: DEBUG
