@@ -1,7 +1,9 @@
 package com.api.onboardingkit.checklist;
 
 import com.api.onboardingkit.checklist.controller.ChecklistController;
+import com.api.onboardingkit.checklist.draft.ChecklistDraft;
 import com.api.onboardingkit.checklist.dto.*;
+import com.api.onboardingkit.checklist.service.ChecklistDraftService;
 import com.api.onboardingkit.checklist.service.ChecklistService;
 import com.api.onboardingkit.config.JwtAuthenticationFilter;
 import com.api.onboardingkit.config.JwtTokenProvider;
@@ -43,6 +45,9 @@ public class ChecklistControllerRestDocsTest {
 
     @MockBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @MockBean
+    private ChecklistDraftService checklistDraftService;
 
     private final String AUTH_HEADER = "Authorization";
     private final String BEARER_TOKEN = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzQ2NzUwMzkyLCJleHAiOjE3NDY3NTIxOTJ9.at_CI6S-_tsBBbuncKyZeSCFDHV5PetEgi0MVHv7IjQ";
@@ -284,4 +289,29 @@ public class ChecklistControllerRestDocsTest {
                                 fieldWithPath("data").description("결과 메시지")
                         )));
     }
+
+    @Test
+    @DisplayName("체크리스트 드래프트 조회 API")
+    void getChecklistDraft() throws Exception {
+        // given
+        ChecklistDraft draft = ChecklistDraft.of("session-abc", List.of("사원증 발급", "노트북 설치"));
+
+        given(checklistDraftService.getDraft("draft-123")).willReturn(draft);
+
+        // when & then
+        mockMvc.perform(get("/checklists/drafts/{draftId}", "draft-123")
+                        .header(AUTH_HEADER, BEARER_TOKEN))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("checklists-draft-get",
+                        pathParameters(
+                                parameterWithName("draftId").description("드래프트 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data[]").description("드래프트에 저장된 체크리스트 항목들 (문자열 리스트)")
+                        )));
+    }
+
 }
