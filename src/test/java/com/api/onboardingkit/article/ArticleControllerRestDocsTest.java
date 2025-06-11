@@ -1,9 +1,7 @@
 package com.api.onboardingkit.article;
 
 import com.api.onboardingkit.article.controller.ArticleController;
-import com.api.onboardingkit.article.dto.ArticleRequestDTO;
-import com.api.onboardingkit.article.dto.ArticleResponseDTO;
-import com.api.onboardingkit.article.dto.ArticleSearchDTO;
+import com.api.onboardingkit.article.dto.*;
 import com.api.onboardingkit.article.service.ArticleService;
 import com.api.onboardingkit.config.JwtAuthenticationFilter;
 import com.api.onboardingkit.config.JwtTokenProvider;
@@ -51,8 +49,8 @@ public class ArticleControllerRestDocsTest {
     void fetchArticles() throws Exception {
         ArticleResponseDTO response = ArticleResponseDTO.builder()
                 .id(1L)
-                .category("가이드")
-                .subcategory("입사")
+                .categoryId(1L)
+                .subcategoryId(2L)
                 .postDate(LocalDateTime.parse("2024-03-01T10:00:00"))
                 .source("GZ")
                 .title("제목")
@@ -75,8 +73,8 @@ public class ArticleControllerRestDocsTest {
                                 fieldWithPath("code").description("응답 코드"),
                                 fieldWithPath("message").description("응답 메시지"),
                                 fieldWithPath("data[].id").description("아티클 ID"),
-                                fieldWithPath("data[].category").description("카테고리"),
-                                fieldWithPath("data[].subcategory").description("서브카테고리"),
+                                fieldWithPath("data[].categoryId").description("카테고리 ID"),
+                                fieldWithPath("data[].subcategoryId").description("서브카테고리 ID"),
                                 fieldWithPath("data[].postDate").description("게시일"),
                                 fieldWithPath("data[].source").description("출처"),
                                 fieldWithPath("data[].title").description("제목"),
@@ -92,8 +90,8 @@ public class ArticleControllerRestDocsTest {
     @DisplayName("아티클 생성 API - 성공")
     void createArticle() throws Exception {
         ArticleRequestDTO request = ArticleRequestDTO.builder()
-                .category("가이드")
-                .subcategory("입사")
+                .categoryId(1L)
+                .subcategoryId(2L)
                 .postDate(LocalDateTime.now())
                 .source("GZ")
                 .title("제목")
@@ -104,8 +102,8 @@ public class ArticleControllerRestDocsTest {
 
         ArticleResponseDTO response = ArticleResponseDTO.builder()
                 .id(1L)
-                .category(request.getCategory())
-                .subcategory(request.getSubcategory())
+                .categoryId(request.getCategoryId())
+                .subcategoryId(request.getSubcategoryId())
                 .postDate(request.getPostDate())
                 .source(request.getSource())
                 .title(request.getTitle())
@@ -123,8 +121,8 @@ public class ArticleControllerRestDocsTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
-                                    "category": "가이드",
-                                    "subcategory": "입사",
+                                    "categoryId": 1,
+                                    "subcategoryId": 2,
                                     "postDate": "2024-03-01T10:00:00",
                                     "source": "GZ",
                                     "title": "제목",
@@ -137,8 +135,8 @@ public class ArticleControllerRestDocsTest {
                 .andDo(print())
                 .andDo(document("articles-create",
                         requestFields(
-                                fieldWithPath("category").description("카테고리"),
-                                fieldWithPath("subcategory").description("서브카테고리"),
+                                fieldWithPath("categoryId").description("카테고리 ID"),
+                                fieldWithPath("subcategoryId").description("서브카테고리 ID"),
                                 fieldWithPath("postDate").description("게시일"),
                                 fieldWithPath("source").description("출처"),
                                 fieldWithPath("title").description("제목"),
@@ -150,8 +148,8 @@ public class ArticleControllerRestDocsTest {
                                 fieldWithPath("code").description("응답 코드"),
                                 fieldWithPath("message").description("응답 메시지"),
                                 fieldWithPath("data.id").description("아티클 ID"),
-                                fieldWithPath("data.category").description("카테고리"),
-                                fieldWithPath("data.subcategory").description("서브카테고리"),
+                                fieldWithPath("data.categoryId").description("카테고리 ID"),
+                                fieldWithPath("data.subcategoryId").description("서브카테고리 ID"),
                                 fieldWithPath("data.postDate").description("게시일"),
                                 fieldWithPath("data.source").description("출처"),
                                 fieldWithPath("data.title").description("제목"),
@@ -198,4 +196,91 @@ public class ArticleControllerRestDocsTest {
                                 parameterWithName("id").description("아티클 ID")
                         )));
     }
+
+    @Test
+    @DisplayName("카테고리 추가 API - 성공")
+    void addCategory() throws Exception {
+        CategoryRequestDTO request = CategoryRequestDTO.builder()
+                .categoryName("기획")
+                .depth(0)
+                .parentId(1L)
+                .build();
+
+        CategoryResponseDTO response = CategoryResponseDTO.builder()
+                .id(1L)
+                .categoryName("기획")
+                .depth(0)
+                .parentId(1L)
+                .createdAt(LocalDateTime.parse("2024-03-01T10:00:00"))
+                .build();
+
+        given(articleService.createCategories(any(CategoryRequestDTO.class)))
+                .willReturn(response);
+
+        mockMvc.perform(post("/articles/categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                            {
+                                "categoryName": "기획",
+                                "depth": 0,
+                                "parentId": null
+                            }
+                            """))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("articles-category-create",
+                        requestFields(
+                                fieldWithPath("categoryName").description("카테고리 이름"),
+                                fieldWithPath("depth").description("카테고리(개발/기획/다자인)는 0, 서브카테고리는 1"),
+                                fieldWithPath("parentId").description("부모 카테고리 ID (서브카테고리인 경우)").optional()
+                        ),
+                        responseFields(
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data.id").description("카테고리 ID"),
+                                fieldWithPath("data.categoryName").description("카테고리 이름"),
+                                fieldWithPath("data.depth").description("카테고리(개발/기획/다자인)는 0, 서브카테고리는 1"),
+                                fieldWithPath("data.parentId").description("부모 카테고리 ID"),
+                                fieldWithPath("data.createdAt").description("생성일시")
+                        )));
+    }
+
+    @Test
+    @DisplayName("카테고리 목록 조회 API - 성공")
+    void getCategories() throws Exception {
+        CategoryResponseDTO category1 = CategoryResponseDTO.builder()
+                .id(1L)
+                .categoryName("기획")
+                .depth(0)
+                .parentId(1L)
+                .createdAt(LocalDateTime.parse("2024-03-01T10:00:00"))
+                .build();
+
+        CategoryResponseDTO category2 = CategoryResponseDTO.builder()
+                .id(2L)
+                .categoryName("UX")
+                .depth(1)
+                .parentId(1L)
+                .createdAt(LocalDateTime.parse("2024-03-02T10:00:00"))
+                .build();
+
+        given(articleService.getCategories())
+                .willReturn(List.of(category1, category2));
+
+        mockMvc.perform(get("/articles/categories")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("articles-category-list",
+                        responseFields(
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data[].id").description("카테고리 ID"),
+                                fieldWithPath("data[].categoryName").description("카테고리 이름"),
+                                fieldWithPath("data[].depth").description("카테고리(개발/기획/다자인)는 0, 서브카테고리는 1"),
+                                fieldWithPath("data[].parentId").description("부모 카테고리 ID"),
+                                fieldWithPath("data[].createdAt").description("생성일시")
+                        )));
+    }
+
 }
