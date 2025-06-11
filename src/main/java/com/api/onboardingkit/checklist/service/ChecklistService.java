@@ -1,9 +1,6 @@
 package com.api.onboardingkit.checklist.service;
 
-import com.api.onboardingkit.checklist.dto.ChecklistItemRequestDTO;
-import com.api.onboardingkit.checklist.dto.ChecklistItemResponseDTO;
-import com.api.onboardingkit.checklist.dto.ChecklistRequestDTO;
-import com.api.onboardingkit.checklist.dto.ChecklistResponseDTO;
+import com.api.onboardingkit.checklist.dto.*;
 import com.api.onboardingkit.checklist.entity.Checklist;
 import com.api.onboardingkit.checklist.entity.ChecklistItem;
 import com.api.onboardingkit.checklist.repository.ChecklistRepository;
@@ -91,6 +88,34 @@ public class ChecklistService extends AbstractService {
                 .orElseThrow(() -> new IllegalArgumentException("체크리스트 아이템을 찾을 수 없습니다."));
 
         checklistItem.toggleCompleted();
+    }
+
+    @Transactional
+    public ChecklistResponseDTO composeChecklist(ChecklistWithItemsRequestDTO requestDTO) {
+        // 1. 체크리스트 생성
+        Checklist checklist = Checklist.builder()
+                .userNo(getMemberId())
+                .title(requestDTO.getTitle())
+                .createdTime(LocalDateTime.now())
+                .updatedTime(LocalDateTime.now())
+                .build();
+
+        Checklist savedChecklist = checklistRepository.save(checklist);
+
+        // 2. 아이템들 추가
+        List<ChecklistItem> items = requestDTO.getItems().stream()
+                .map(content -> ChecklistItem.builder()
+                        .checklistId(savedChecklist.getId())
+                        .content(content)
+                        .completed(false)
+                        .createdTime(LocalDateTime.now())
+                        .updatedTime(LocalDateTime.now())
+                        .build())
+                .toList();
+
+        checklistItemRepository.saveAll(items);
+
+        return new ChecklistResponseDTO(savedChecklist);
     }
 
 }
