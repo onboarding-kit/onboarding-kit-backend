@@ -15,9 +15,6 @@ public class Article {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String category;
-    private String subcategory;
-    private LocalDateTime postDate;
     private Long categoryId;
     private Long subcategoryId;
     private LocalDateTime postDate;
