@@ -6,14 +6,14 @@ import org.springframework.data.domain.Sort;
 
 public class ArticleSpecification {
 
-    public static Specification<Article> categoryEquals(String category) {
+    public static Specification<Article> categoryIdEquals(Long categoryId) {
         return (root, query, cb) ->
-                category == null ? null : cb.equal(root.get("category"), category);
+                categoryId == null ? null : cb.equal(root.get("categoryId"), categoryId);
     }
 
-    public static Specification<Article> subcategoryEquals(String subcategory) {
+    public static Specification<Article> subcategoryIdEquals(Long subcategoryId) {
         return (root, query, cb) ->
-                subcategory == null ? null : cb.equal(root.get("subcategory"), subcategory);
+                subcategoryId == null ? null : cb.equal(root.get("subcategoryId"), subcategoryId);
     }
 
     public static Specification<Article> titleContains(String title) {

@@ -29,8 +29,8 @@ public class ArticleService {
 
     public List<ArticleResponseDTO> fetchArticles(ArticleSearchDTO searchDTO) {
         Specification<Article> spec = Specification
-                .where(ArticleSpecification.categoryEquals(searchDTO.getCategory()))
-                .and(ArticleSpecification.subcategoryEquals(searchDTO.getSubcategory()))
+                .where(ArticleSpecification.categoryIdEquals(searchDTO.getCategoryId()))
+                .and(ArticleSpecification.subcategoryIdEquals(searchDTO.getSubcategoryId()))
                 .and(ArticleSpecification.titleContains(searchDTO.getTitle()));
 
         Sort sort = ArticleSpecification.getSort(searchDTO.getSortBy());
