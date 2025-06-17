@@ -120,6 +120,24 @@ public class ChecklistControllerRestDocsTest {
     }
 
     @Test
+    @DisplayName("체크리스트 삭제 API")
+    void deleteChecklist() throws Exception {
+        mockMvc.perform(delete("/checklists/{checklistId}", 1L)
+                        .header(AUTH_HEADER, BEARER_TOKEN))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("checklists-delete",
+                        pathParameters(
+                                parameterWithName("checklistId").description("삭제할 체크리스트 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data").description("결과 메시지")
+                        )));
+    }
+
+    @Test
     @DisplayName("체크리스트 제목 수정 API")
     void updateChecklistTitle() throws Exception {
         mockMvc.perform(put("/checklists/{checklistId}/title", 1L)
