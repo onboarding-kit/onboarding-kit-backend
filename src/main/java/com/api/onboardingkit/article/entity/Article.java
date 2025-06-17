@@ -18,6 +18,9 @@ public class Article {
     private String category;
     private String subcategory;
     private LocalDateTime postDate;
+    private Long categoryId;
+    private Long subcategoryId;
+    private LocalDateTime postDate;
     private LocalDateTime createdTime;
     private String source;
     private String title;
