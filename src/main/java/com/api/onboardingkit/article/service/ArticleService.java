@@ -7,8 +7,11 @@ import com.api.onboardingkit.article.dto.ArticleResponseDTO;
 import com.api.onboardingkit.article.entity.Article;
 import com.api.onboardingkit.article.entity.Hashtag;
 import com.api.onboardingkit.article.dto.ArticleSearchDTO;
+import com.api.onboardingkit.article.repository.specification.ArticleSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,18 +26,19 @@ public class ArticleService {
     private final HashtagRepository hashtagRepository;
 
     public List<ArticleResponseDTO> fetchArticles(ArticleSearchDTO searchDTO) {
-        List<Article> articles = articleRepository.findArticles(
-                searchDTO.getCategory(),
-                searchDTO.getSubcategory(),
-                searchDTO.getTitle(),
-                searchDTO.getSortBy()
-        );
+        Specification<Article> spec = Specification
+                .where(ArticleSpecification.categoryEquals(searchDTO.getCategory()))
+                .and(ArticleSpecification.subcategoryEquals(searchDTO.getSubcategory()))
+                .and(ArticleSpecification.titleContains(searchDTO.getTitle()));
+
+        Sort sort = ArticleSpecification.getSort(searchDTO.getSortBy());
+
+        List<Article> articles = articleRepository.findAll(spec, sort);
 
         return articles.stream()
                 .map(article -> {
                     List<String> hashtags = hashtagRepository.findByArticleId(article.getId())
-                            .stream()
-                            .map(Hashtag::getContent)
+                            .stream().map(Hashtag::getContent)
                             .collect(Collectors.toList());
                     return ArticleResponseDTO.fromEntity(article, hashtags);
                 })
@@ -55,7 +59,7 @@ public class ArticleService {
                 .thumbnail(requestDTO.getThumbnail())
                 .url(requestDTO.getUrl())
                 .views(0)
-                .createdTime(LocalDateTime.now()) // todo. requestDTO.getPostDate() 받는 부분 등록될때의 시간으로 변경
+                .createdTime(LocalDateTime.now())
                 .build();
 
         return ArticleResponseDTO.fromEntity(articleRepository.save(article), List.of());
@@ -68,7 +72,7 @@ public class ArticleService {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 아티클이 존재하지 않습니다: " + id));
 
-        article.incrementViews(); // todo. 별도 메서드 활용
+        article.incrementViews();
         return article.getUrl();
     }
 
