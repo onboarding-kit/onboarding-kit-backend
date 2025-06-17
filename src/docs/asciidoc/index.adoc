@@ -6,147 +6,166 @@ integer ji <jjs9536@gmail.com>
 :source-highlighter: highlightjs
 :snippets: build/generated-snippets
 
-== 메인 API (MainController)
+== 메인 API
 
-=== 체크리스트 상태 조회 API (`GET https://onboarding-kit.site/onboardingkit/api/main/checklists/status`)
+=== [GET] 체크리스트 진행률 요약 조회
 include::{snippets}/main-checklists-status/http-request.adoc[]
 include::{snippets}/main-checklists-status/http-response.adoc[]
 include::{snippets}/main-checklists-status/response-fields.adoc[]
----
 
-=== 전체 체크리스트 조회 API (`GET https://onboarding-kit.site/onboardingkit/api/main/checklists`)
-include::{snippets}/main-checklists/http-request.adoc[]
-include::{snippets}/main-checklists/http-response.adoc[]
-include::{snippets}/main-checklists/response-fields.adoc[]
----
+=== [GET] 체크리스트 상세 목록 조회
+include::{snippets}/main-checklists-detail/http-request.adoc[]
+include::{snippets}/main-checklists-detail/http-response.adoc[]
+include::{snippets}/main-checklists-detail/response-fields.adoc[]
 
-=== 메인 아티클 리스트 조회 API (`GET https://onboarding-kit.site/onboardingkit/api/main/articles`)
+=== [GET] 추천 아티클 목록 조회
 include::{snippets}/main-articles/http-request.adoc[]
 include::{snippets}/main-articles/http-response.adoc[]
 include::{snippets}/main-articles/response-fields.adoc[]
 
-== 아티클 API (ArticleController)
+== 아티클 API
 
-=== 아티클 목록 조회 API (`GET https://onboarding-kit.site/onboardingkit/api/articles`)
+=== [GET] 아티클 목록 조회
 include::{snippets}/articles-list/http-request.adoc[]
 include::{snippets}/articles-list/http-response.adoc[]
 include::{snippets}/articles-list/response-fields.adoc[]
----
 
-=== 아티클 생성 API (`POST https://onboarding-kit.site/onboardingkit/api/articles`)
+=== [POST] 아티클 생성
 include::{snippets}/articles-create/http-request.adoc[]
 include::{snippets}/articles-create/request-fields.adoc[]
 include::{snippets}/articles-create/http-response.adoc[]
 include::{snippets}/articles-create/response-fields.adoc[]
----
 
-=== 아티클 해시태그 추가 API (`POST https://onboarding-kit.site/onboardingkit/api/articles/{id}/hashtags`)
+=== [POST] 아티클 해시태그 추가
 include::{snippets}/articles-add-hashtag/http-request.adoc[]
 include::{snippets}/articles-add-hashtag/path-parameters.adoc[]
 include::{snippets}/articles-add-hashtag/query-parameters.adoc[]
 include::{snippets}/articles-add-hashtag/http-response.adoc[]
----
+include::{snippets}/articles-add-hashtag/response-fields.adoc[]
 
-=== 아티클 리다이렉트 API (`GET https://onboarding-kit.site/onboardingkit/api/articles/{id}/redirect`)
+=== [GET] 아티클 리다이렉트
 include::{snippets}/articles-redirect/http-request.adoc[]
 include::{snippets}/articles-redirect/path-parameters.adoc[]
 include::{snippets}/articles-redirect/http-response.adoc[]
 
-== 체크리스트 API (ChecklistController)
+=== [GET] 카테고리 목록 조회
+include::{snippets}/articles-category-list/http-request.adoc[]
+include::{snippets}/articles-category-list/http-response.adoc[]
+include::{snippets}/articles-category-list/response-fields.adoc[]
 
-=== 전체 체크리스트 조회 API (`GET https://onboarding-kit.site/onboardingkit/api/checklists`)
+=== [POST] 카테고리 추가
+include::{snippets}/articles-category-create/http-request.adoc[]
+include::{snippets}/articles-category-create/request-fields.adoc[]
+include::{snippets}/articles-category-create/http-response.adoc[]
+include::{snippets}/articles-category-create/response-fields.adoc[]
+
+== 체크리스트 API
+
+=== [GET] 체크리스트 전체 조회
 include::{snippets}/checklists-list/http-request.adoc[]
 include::{snippets}/checklists-list/http-response.adoc[]
 include::{snippets}/checklists-list/response-fields.adoc[]
----
 
-=== 체크리스트 생성 API (`POST https://onboarding-kit.site/onboardingkit/api/checklists`)
+=== [POST] 체크리스트 생성
 include::{snippets}/checklists-create/http-request.adoc[]
 include::{snippets}/checklists-create/request-fields.adoc[]
 include::{snippets}/checklists-create/http-response.adoc[]
 include::{snippets}/checklists-create/response-fields.adoc[]
----
 
-=== 체크리스트 제목 수정 API (`PUT https://onboarding-kit.site/onboardingkit/api/checklists/{checklistId}/title`)
+=== [DELETE] 체크리스트 삭제
+include::{snippets}/checklists-delete/http-request.adoc[]
+include::{snippets}/checklists-delete/path-parameters.adoc[]
+include::{snippets}/checklists-delete/http-response.adoc[]
+include::{snippets}/checklists-delete/response-fields.adoc[]
+
+=== [PUT] 체크리스트 제목 수정
 include::{snippets}/checklists-update-title/http-request.adoc[]
 include::{snippets}/checklists-update-title/path-parameters.adoc[]
 include::{snippets}/checklists-update-title/request-fields.adoc[]
 include::{snippets}/checklists-update-title/http-response.adoc[]
----
+include::{snippets}/checklists-update-title/response-fields.adoc[]
 
-=== 체크리스트 아이템 목록 조회 API (`GET https://onboarding-kit.site/onboardingkit/api/checklists/{checklistId}/items`)
+=== [GET] 체크리스트 아이템 목록 조회
 include::{snippets}/checklists-items-list/http-request.adoc[]
 include::{snippets}/checklists-items-list/path-parameters.adoc[]
 include::{snippets}/checklists-items-list/http-response.adoc[]
 include::{snippets}/checklists-items-list/response-fields.adoc[]
----
 
-=== 체크리스트 아이템 추가 API (`POST https://onboarding-kit.site/onboardingkit/api/checklists/{checklistId}/items`)
+=== [POST] 체크리스트 아이템 추가
 include::{snippets}/checklists-items-add/http-request.adoc[]
 include::{snippets}/checklists-items-add/path-parameters.adoc[]
 include::{snippets}/checklists-items-add/request-fields.adoc[]
 include::{snippets}/checklists-items-add/http-response.adoc[]
 include::{snippets}/checklists-items-add/response-fields.adoc[]
----
 
-=== 체크리스트 아이템 삭제 API (`DELETE https://onboarding-kit.site/onboardingkit/api/checklists/{checklistId}/items/{itemId}`)
-include::{snippets}/checklists-items-delete/http-request.adoc[]
-include::{snippets}/checklists-items-delete/path-parameters.adoc[]
-include::{snippets}/checklists-items-delete/http-response.adoc[]
----
-
-=== 체크리스트 아이템 수정 API (`PUT https://onboarding-kit.site/onboardingkit/api/checklists/{checklistId}/items/{itemId}`)
+=== [PUT] 체크리스트 아이템 수정
 include::{snippets}/checklists-items-update/http-request.adoc[]
 include::{snippets}/checklists-items-update/path-parameters.adoc[]
 include::{snippets}/checklists-items-update/request-fields.adoc[]
 include::{snippets}/checklists-items-update/http-response.adoc[]
----
+include::{snippets}/checklists-items-update/response-fields.adoc[]
 
-=== 체크리스트 아이템 완료 처리 API (`PATCH https://onboarding-kit.site/onboardingkit/api/checklists/{checklistId}/items/{itemId}/complete`)
+=== [DELETE] 체크리스트 아이템 삭제
+include::{snippets}/checklists-items-delete/http-request.adoc[]
+include::{snippets}/checklists-items-delete/path-parameters.adoc[]
+include::{snippets}/checklists-items-delete/http-response.adoc[]
+include::{snippets}/checklists-items-delete/response-fields.adoc[]
+
+=== [PATCH] 체크리스트 아이템 완료 상태 변경
 include::{snippets}/checklists-items-complete/http-request.adoc[]
 include::{snippets}/checklists-items-complete/path-parameters.adoc[]
 include::{snippets}/checklists-items-complete/http-response.adoc[]
+include::{snippets}/checklists-items-complete/response-fields.adoc[]
 
-== 프롬프트 API (PromptController)
+=== [GET] 드래프트 체크리스트 조회
+include::{snippets}/checklists-draft-get/http-request.adoc[]
+include::{snippets}/checklists-draft-get/path-parameters.adoc[]
+include::{snippets}/checklists-draft-get/http-response.adoc[]
+include::{snippets}/checklists-draft-get/response-fields.adoc[]
 
-=== 프롬프트 세션 생성 API (`POST https://onboarding-kit.site/onboardingkit/api/prompt/session`)
-include::{snippets}/prompt-create-session/http-request.adoc[]
-include::{snippets}/prompt-create-session/http-response.adoc[]
-include::{snippets}/prompt-create-session/response-fields.adoc[]
----
+=== [POST] 체크리스트 제목+항목 일괄 생성
+include::{snippets}/checklists-compose/http-request.adoc[]
+include::{snippets}/checklists-compose/request-fields.adoc[]
+include::{snippets}/checklists-compose/http-response.adoc[]
+include::{snippets}/checklists-compose/response-fields.adoc[]
 
-=== 프롬프트 세션 메시지 조회 API (`GET https://onboarding-kit.site/onboardingkit/api/prompt/{sessionId}/messages`)
-include::{snippets}/prompt-get-messages/http-request.adoc[]
-include::{snippets}/prompt-get-messages/path-parameters.adoc[]
-include::{snippets}/prompt-get-messages/http-response.adoc[]
-include::{snippets}/prompt-get-messages/response-fields.adoc[]
----
+== 멤버 API
 
-=== 프롬프트 메시지 전송 API (`POST https://onboarding-kit.site/onboardingkit/api/prompt/{sessionId}/messages`)
-include::{snippets}/prompt-send-message/http-request.adoc[]
-include::{snippets}/prompt-send-message/path-parameters.adoc[]
-include::{snippets}/prompt-send-message/request-fields.adoc[]
-include::{snippets}/prompt-send-message/http-response.adoc[]
-include::{snippets}/prompt-send-message/response-fields.adoc[]
-
-== 멤버 API (MemberController)
-
-=== 내 프로필 조회 API (`GET https://onboarding-kit.site/onboardingkit/api/member/me`)
+=== [GET] 내 프로필 조회
 include::{snippets}/member-get-profile/http-request.adoc[]
 include::{snippets}/member-get-profile/http-response.adoc[]
 include::{snippets}/member-get-profile/response-fields.adoc[]
----
 
-=== 내 프로필 수정 API (`PATCH https://onboarding-kit.site/onboardingkit/api/member`)
+=== [PATCH] 내 프로필 수정
 include::{snippets}/member-update-profile/http-request.adoc[]
 include::{snippets}/member-update-profile/request-fields.adoc[]
 include::{snippets}/member-update-profile/http-response.adoc[]
 include::{snippets}/member-update-profile/response-fields.adoc[]
 
-== 소셜 로그인 API (OAuthController)
+== 소셜 로그인 API
 
-=== OAuth 로그인 API (`POST https://onboarding-kit.site/onboardingkit/api/oauth/login`)
+=== [POST] 소셜 로그인 요청
 include::{snippets}/oauth-login/http-request.adoc[]
 include::{snippets}/oauth-login/request-fields.adoc[]
 include::{snippets}/oauth-login/http-response.adoc[]
 include::{snippets}/oauth-login/response-fields.adoc[]
+
+== 프롬프트 API
+
+=== [POST] 프롬프트 세션 생성
+include::{snippets}/prompt-create-session/http-request.adoc[]
+include::{snippets}/prompt-create-session/http-response.adoc[]
+include::{snippets}/prompt-create-session/response-fields.adoc[]
+
+=== [GET] 세션 메시지 목록 조회
+include::{snippets}/prompt-get-messages/http-request.adoc[]
+include::{snippets}/prompt-get-messages/path-parameters.adoc[]
+include::{snippets}/prompt-get-messages/http-response.adoc[]
+include::{snippets}/prompt-get-messages/response-fields.adoc[]
+
+=== [POST] 메시지 전송
+include::{snippets}/prompt-send-message/http-request.adoc[]
+include::{snippets}/prompt-send-message/path-parameters.adoc[]
+include::{snippets}/prompt-send-message/request-fields.adoc[]
+include::{snippets}/prompt-send-message/http-response.adoc[]
+include::{snippets}/prompt-send-message/response-fields.adoc[]

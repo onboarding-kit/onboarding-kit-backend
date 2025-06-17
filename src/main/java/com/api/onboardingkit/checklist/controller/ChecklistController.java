@@ -27,6 +27,12 @@ public class ChecklistController {
         return CustomResponse.success(checklistService.createChecklist(requestDTO), SuccessStatus.SUCCESS);
     }
 
+    @DeleteMapping("/{checklistId}")
+    public CustomResponse<?> deleteChecklist(@PathVariable Long checklistId) {
+        checklistService.deleteChecklist(checklistId);
+        return CustomResponse.success("체크리스트가 삭제되었습니다.", SuccessStatus.SUCCESS);
+    }
+
     @PutMapping("/{checklistId}/title")
     public CustomResponse<?> updateChecklistTitle(
             @PathVariable Long checklistId,

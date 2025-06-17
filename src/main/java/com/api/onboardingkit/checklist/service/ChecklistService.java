@@ -40,6 +40,15 @@ public class ChecklistService extends AbstractService {
     }
 
     @Transactional
+    public void deleteChecklist(Long checklistId) {
+        Checklist checklist = checklistRepository.findById(checklistId)
+                .orElseThrow(() -> new IllegalArgumentException("체크리스트를 찾을 수 없습니다."));
+
+        checklistItemRepository.deleteAll(checklistItemRepository.findByChecklistId(checklistId));
+        checklistRepository.delete(checklist);
+    }
+
+    @Transactional
     public void updateChecklistTitle(Long checklistId, ChecklistRequestDTO requestDTO) {
         Checklist checklist = checklistRepository.findById(checklistId)
                 .orElseThrow(() -> new IllegalArgumentException("체크리스트를 찾을 수 없습니다."));
