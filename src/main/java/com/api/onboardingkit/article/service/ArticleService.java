@@ -7,8 +7,12 @@ import com.api.onboardingkit.article.repository.CategoryRepository;
 import com.api.onboardingkit.article.repository.HashtagRepository;
 import com.api.onboardingkit.article.entity.Article;
 import com.api.onboardingkit.article.entity.Hashtag;
+import com.api.onboardingkit.article.dto.ArticleSearchDTO;
+import com.api.onboardingkit.article.repository.specification.ArticleSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,18 +28,19 @@ public class ArticleService {
     private final CategoryRepository categoryRepository;
 
     public List<ArticleResponseDTO> fetchArticles(ArticleSearchDTO searchDTO) {
-        List<Article> articles = articleRepository.findArticles(
-                searchDTO.getCategoryId(),
-                searchDTO.getSubcategoryId(),
-                searchDTO.getTitle(),
-                searchDTO.getSortBy()
-        );
+        Specification<Article> spec = Specification
+                .where(ArticleSpecification.categoryIdEquals(searchDTO.getCategoryId()))
+                .and(ArticleSpecification.subcategoryIdEquals(searchDTO.getSubcategoryId()))
+                .and(ArticleSpecification.titleContains(searchDTO.getTitle()));
+
+        Sort sort = ArticleSpecification.getSort(searchDTO.getSortBy());
+
+        List<Article> articles = articleRepository.findAll(spec, sort);
 
         return articles.stream()
                 .map(article -> {
                     List<String> hashtags = hashtagRepository.findByArticleId(article.getId())
-                            .stream()
-                            .map(Hashtag::getContent)
+                            .stream().map(Hashtag::getContent)
                             .collect(Collectors.toList());
                     return ArticleResponseDTO.fromEntity(article, hashtags);
                 })

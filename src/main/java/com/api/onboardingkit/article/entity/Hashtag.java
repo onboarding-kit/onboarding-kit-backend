@@ -15,7 +15,7 @@ public class Hashtag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long articleId; // todo. 연관성 제거
+    private Long articleId;
     private String content;
     private LocalDateTime createTime;
 }
