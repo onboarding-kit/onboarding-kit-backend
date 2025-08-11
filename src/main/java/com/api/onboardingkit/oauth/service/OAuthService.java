@@ -1,5 +1,6 @@
 package com.api.onboardingkit.oauth.service;
 
+import com.api.onboardingkit.config.AbstractService;
 import com.api.onboardingkit.config.JwtTokenProvider;
 import com.api.onboardingkit.config.exception.CustomException;
 import com.api.onboardingkit.config.exception.ErrorCode;
@@ -11,11 +12,12 @@ import com.api.onboardingkit.oauth.provider.OAuthProvider;
 import com.api.onboardingkit.oauth.provider.OAuthProviderFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
 @RequiredArgsConstructor
-public class OAuthService {
+public class OAuthService extends AbstractService {
     private final OAuthProviderFactory oAuthProviderFactory;
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
@@ -74,5 +76,23 @@ public class OAuthService {
         memberRepository.save(member);
 
         return new TokenResponseDto(newAccessToken, newRefreshToken);
+    }
+
+    @Transactional
+    public void logout() {
+        Long memberId = getMemberId();
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+
+        member.setRefreshToken(null);
+        memberRepository.save(member);
+    }
+
+    @Transactional
+    public void withdraw() {
+        Long memberId=getMemberId();
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
+        memberRepository.delete(member);
     }
 }
