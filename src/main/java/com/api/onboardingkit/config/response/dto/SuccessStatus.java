@@ -12,6 +12,8 @@ public enum SuccessStatus {
     //oauth
     OAUTH_AUTHENTICATION(200, "소셜 액세스 토큰 인증 성공"),
     TOKEN_REISSUE_OK(200,"토큰 재발급 성공"),
+    LOGOUT_OK(200,"로그아웃 성공"),
+    MEMBER_WITHDRAW_OK(200,"회원탈퇴 성공"),
 
     //member
     GET_MEMBER_OK(200,"멤버 조회 성공"),
