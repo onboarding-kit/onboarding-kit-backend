@@ -12,7 +12,9 @@ import com.api.onboardingkit.main.dto.MainChecklistDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -36,8 +38,14 @@ public class MainService extends AbstractService {
     }
 
     public MainChecklistDTO getMainChecklist() {
-        Checklist recentChecklist = checklistRepository.findTopByUserNoOrderByCreatedTimeDesc(getMemberId())
-                .orElseThrow(() -> new IllegalArgumentException("최근 체크리스트가 존재하지 않습니다."));
+        Optional<Checklist> optionalChecklist =
+                checklistRepository.findTopByUserNoOrderByCreatedTimeDesc(getMemberId());
+
+        if (optionalChecklist.isEmpty()) {
+            return new MainChecklistDTO(null, null, Collections.emptyList());
+        }
+
+        Checklist recentChecklist = optionalChecklist.get();
 
         List<MainChecklistItemDTO> pendingItems = checklistItemRepository
                 .findTop3ByChecklistIdAndCompletedFalseOrderByCreatedTimeDesc(recentChecklist.getId())
