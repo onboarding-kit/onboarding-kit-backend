@@ -75,7 +75,7 @@ public class MainControllerRestDocsTest {
         MainChecklistDTO dto = new MainChecklistDTO(
                 1L,
                 "입사 준비",
-                List.of(new MainChecklistItemDTO(10L, "노트북 세팅", LocalDateTime.now()))
+                List.of(new MainChecklistItemDTO(10L, "노트북 세팅", true, LocalDateTime.now()))
         );
 
         given(mainService.getMainChecklist()).willReturn(dto);
@@ -92,6 +92,7 @@ public class MainControllerRestDocsTest {
                                 fieldWithPath("data.checklistTitle").description("체크리스트 제목"),
                                 fieldWithPath("data.checklistItems[].id").description("체크리스트 항목 ID"),
                                 fieldWithPath("data.checklistItems[].content").description("항목 내용"),
+                                fieldWithPath("data.checklistItems[].completed").description(true),
                                 fieldWithPath("data.checklistItems[].createdTime").description("생성일시")
                         )));
     }
