@@ -13,11 +13,13 @@ import java.time.LocalDateTime;
 public class MainChecklistItemDTO {
     private Long id;
     private String content;
+    private Boolean completed;
     private LocalDateTime createdTime;
 
     public MainChecklistItemDTO(ChecklistItem checklistItem) {
         this.id = checklistItem.getId();
         this.content = checklistItem.getContent();
+        this.completed = checklistItem.getCompleted();
         this.createdTime = checklistItem.getCreatedTime();
     }
 
