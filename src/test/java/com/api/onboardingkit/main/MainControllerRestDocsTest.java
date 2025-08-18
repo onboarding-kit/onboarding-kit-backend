@@ -20,10 +20,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
+import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -69,22 +75,30 @@ public class MainControllerRestDocsTest {
                         )));
     }
 
+    @DisplayName("메인 체크리스트 상세 조회 API - 특정 ID로 조회")
     @Test
-    @DisplayName("메인 체크리스트 상세 조회 API")
-    void getMainChecklist() throws Exception {
+    void getMainChecklist_byId() throws Exception {
+        long checklistId = 1L;
+
         MainChecklistDTO dto = new MainChecklistDTO(
-                1L,
+                checklistId,
                 "입사 준비",
                 List.of(new MainChecklistItemDTO(10L, "노트북 세팅", true, LocalDateTime.now()))
         );
 
-        given(mainService.getMainChecklist()).willReturn(dto);
+        given(mainService.getMainChecklist(checklistId)).willReturn(dto);
 
-        mockMvc.perform(get("/main/checklists")
+        mockMvc.perform(get("/main/checklists/{checklistId}", checklistId)
                         .header(AUTH_HEADER, BEARER_TOKEN))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document("main-checklists-detail",
+                        requestHeaders(
+                                headerWithName(AUTH_HEADER).description("Bearer 인증 토큰")
+                        ),
+                        pathParameters(
+                                parameterWithName("checklistId").description("체크리스트 ID")
+                        ),
                         responseFields(
                                 fieldWithPath("code").description("응답 코드"),
                                 fieldWithPath("message").description("응답 메시지"),
@@ -92,9 +106,47 @@ public class MainControllerRestDocsTest {
                                 fieldWithPath("data.checklistTitle").description("체크리스트 제목"),
                                 fieldWithPath("data.checklistItems[].id").description("체크리스트 항목 ID"),
                                 fieldWithPath("data.checklistItems[].content").description("항목 내용"),
-                                fieldWithPath("data.checklistItems[].completed").description(true),
-                                fieldWithPath("data.checklistItems[].createdTime").description("생성일시")
-                        )));
+                                fieldWithPath("data.checklistItems[].completed").description("완료 여부 (boolean)"),
+                                fieldWithPath("data.checklistItems[].createdTime").description("생성 일시")
+                        )
+                ));
+
+        then(mainService).should().getMainChecklist(checklistId);
+    }
+
+    @DisplayName("메인 체크리스트 상세 조회 API - 파라미터 없으면 최신 체크리스트")
+    @Test
+    void getMainChecklist_recentWhenNoId() throws Exception {
+        MainChecklistDTO dto = new MainChecklistDTO(
+                2L,
+                "온보딩 체크리스트",
+                List.of(new MainChecklistItemDTO(20L, "보안 교육 수강", false, LocalDateTime.now()))
+        );
+
+        // null 인자 매칭은 isNull() 사용
+        given(mainService.getMainChecklist(isNull())).willReturn(dto);
+
+        mockMvc.perform(get("/main/checklists")
+                        .header(AUTH_HEADER, BEARER_TOKEN))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("main-checklists-recent",
+                        requestHeaders(
+                                headerWithName(AUTH_HEADER).description("Bearer 인증 토큰")
+                        ),
+                        responseFields(
+                                fieldWithPath("code").description("응답 코드"),
+                                fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data.checklistId").description("체크리스트 ID"),
+                                fieldWithPath("data.checklistTitle").description("체크리스트 제목"),
+                                fieldWithPath("data.checklistItems[].id").description("체크리스트 항목 ID"),
+                                fieldWithPath("data.checklistItems[].content").description("항목 내용"),
+                                fieldWithPath("data.checklistItems[].completed").description("완료 여부 (boolean)"),
+                                fieldWithPath("data.checklistItems[].createdTime").description("생성 일시")
+                        )
+                ));
+
+        then(mainService).should().getMainChecklist(isNull());
     }
 
     @Test

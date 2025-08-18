@@ -9,6 +9,7 @@ import com.api.onboardingkit.main.service.MainService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,9 +27,11 @@ public class MainController {
         return CustomResponse.success(mainService.getMainChecklistStatus(), SuccessStatus.SUCCESS);
     }
 
-    @GetMapping("/checklists")
-    public CustomResponse<?> getMainChecklist() {
-        return CustomResponse.success(mainService.getMainChecklist(), SuccessStatus.SUCCESS);
+    @GetMapping({"/checklists", "/checklists/{checklistId}"})
+    public CustomResponse<?> getMainChecklist(
+            @PathVariable(value = "checklistId", required = false) Long checklistId
+    ) {
+        return CustomResponse.success(mainService.getMainChecklist(checklistId), SuccessStatus.SUCCESS);
     }
 
     @GetMapping("/articles")
