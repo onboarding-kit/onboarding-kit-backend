@@ -5,12 +5,15 @@ import com.api.onboardingkit.checklist.entity.Checklist;
 import com.api.onboardingkit.checklist.repository.ChecklistItemRepository;
 import com.api.onboardingkit.checklist.repository.ChecklistRepository;
 import com.api.onboardingkit.config.AbstractService;
+import com.api.onboardingkit.config.exception.CustomException;
+import com.api.onboardingkit.config.exception.ErrorCode;
 import com.api.onboardingkit.main.dto.MainArticleDTO;
 import com.api.onboardingkit.main.dto.MainChecklistItemDTO;
 import com.api.onboardingkit.main.dto.MainStatusChecklistDTO;
 import com.api.onboardingkit.main.dto.MainChecklistDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,23 +40,31 @@ public class MainService extends AbstractService {
                 .collect(Collectors.toList());
     }
 
-    public MainChecklistDTO getMainChecklist() {
-        Optional<Checklist> optionalChecklist =
-                checklistRepository.findTopByUserNoOrderByCreatedTimeDesc(getMemberId());
+    @Transactional(readOnly = true)
+    public MainChecklistDTO getMainChecklist(Long checklistId) {
+        Long memberId = getMemberId();
 
-        if (optionalChecklist.isEmpty()) {
+        Optional<Checklist> target = (checklistId == null)
+                ? checklistRepository.findTopByUserNoOrderByCreatedTimeDesc(memberId)
+                : checklistRepository.findById(checklistId);
+
+        if (target.isEmpty()) {
             return new MainChecklistDTO(null, null, Collections.emptyList());
         }
 
-        Checklist recentChecklist = optionalChecklist.get();
+        Checklist checklist = target.get();
+
+        if (!checklist.getUserNo().equals(memberId)) {
+            throw new CustomException(ErrorCode.CHECKLIST_ACCESS_DENIED);
+        }
 
         List<MainChecklistItemDTO> pendingItems = checklistItemRepository
-                .findTop3ByChecklistIdAndCompletedFalseOrderByCreatedTimeDesc(recentChecklist.getId())
+                .findTop3ByChecklistIdAndCompletedFalseOrderByCreatedTimeDesc(checklist.getId())
                 .stream()
                 .map(MainChecklistItemDTO::new)
                 .collect(Collectors.toList());
 
-        return new MainChecklistDTO(recentChecklist.getId(), recentChecklist.getTitle(), pendingItems);
+        return new MainChecklistDTO(checklist.getId(), checklist.getTitle(), pendingItems);
     }
 
     public List<MainArticleDTO> getMainArticles() {

@@ -27,6 +27,10 @@ public enum ErrorCode {
     NOT_FOUND_AUTHORIZATION_HEADER(401, "Authorization 헤더가 없습니다."),
     NULL_POINT_HEADER_REQUEST(403,"헤더에 값이 없습니다."),
 
+    // checklist
+    NOT_FOUND_CHECKLIST(404, "체크리스트를 찾을 수 없습니다."),
+    CHECKLIST_ACCESS_DENIED(403, "본인 소유의 체크리스트가 아닙니다."),
+
     //member
     MEMBER_NOT_FOUND_FROM_EMAIL(404,"해당 이메일의 멤버를 찾을 수 없습니다."),
     MEMBER_NOT_FOUND_FROM_ACCESS_TOKEN(404,"해당 액세스 토큰으로 멤버를 찾을 수 없습니다."),
