@@ -35,7 +35,13 @@ public class MainService extends AbstractService {
                     Integer completedItems = checklistItemRepository.countByChecklistIdAndCompleted(checklist.getId(), true);
                     double progress = totalItems > 0 ? (completedItems * 100.0 / totalItems) : 0.0;
 
-                    return new MainStatusChecklistDTO(checklist.getTitle(), totalItems, completedItems, progress);
+                    return MainStatusChecklistDTO.builder()
+                            .checklistId(checklist.getId())
+                            .title(checklist.getTitle())
+                            .totalItems(totalItems)
+                            .completedItems(completedItems)
+                            .progress(progress)
+                            .build();
                 })
                 .collect(Collectors.toList());
     }
