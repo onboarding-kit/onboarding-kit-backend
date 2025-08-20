@@ -56,7 +56,7 @@ public class MainControllerRestDocsTest {
     @Test
     @DisplayName("메인 체크리스트 진행률 조회 API")
     void getChecklistProgress() throws Exception {
-        MainStatusChecklistDTO dto = new MainStatusChecklistDTO("입사 준비", 5, 3, 60.0);
+        MainStatusChecklistDTO dto = new MainStatusChecklistDTO(1L, "입사 준비", 5, 3, 60.0);
 
         given(mainService.getMainChecklistStatus()).willReturn(List.of(dto));
 
@@ -68,6 +68,7 @@ public class MainControllerRestDocsTest {
                         responseFields(
                                 fieldWithPath("code").description("응답 코드"),
                                 fieldWithPath("message").description("응답 메시지"),
+                                fieldWithPath("data[].checklistId").description("체크리스트 ID"),
                                 fieldWithPath("data[].title").description("체크리스트 제목"),
                                 fieldWithPath("data[].totalItems").description("전체 항목 수"),
                                 fieldWithPath("data[].completedItems").description("완료 항목 수"),
