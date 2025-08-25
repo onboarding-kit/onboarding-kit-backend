@@ -158,7 +158,8 @@ public class MainControllerRestDocsTest {
                 "이 글은 첫 출근을 앞둔 당신에게 도움이 될 것입니다.",
                 "thumb.jpg",
                 "https://example.com",
-                456
+                456,
+                LocalDateTime.parse("2024-03-01T10:00:00")
         );
 
         given(mainService.getMainArticles()).willReturn(List.of(dto));
@@ -175,7 +176,8 @@ public class MainControllerRestDocsTest {
                                 fieldWithPath("data[].summary").description("요약"),
                                 fieldWithPath("data[].thumbnail").description("썸네일 이미지 경로"),
                                 fieldWithPath("data[].url").description("링크 URL"),
-                                fieldWithPath("data[].views").description("조회수")
+                                fieldWithPath("data[].views").description("조회수"),
+                                fieldWithPath("data[].postDate").description("게시일")
                         )));
     }
 }
