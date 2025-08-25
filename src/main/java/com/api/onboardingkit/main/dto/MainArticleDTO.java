@@ -13,5 +13,7 @@ public class MainArticleDTO {
     private String thumbnail;
     private String url;
     private int views;
+    private String source;
+    private String categoryName;
     private LocalDateTime postDate;
 }

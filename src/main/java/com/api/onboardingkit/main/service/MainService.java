@@ -1,6 +1,8 @@
 package com.api.onboardingkit.main.service;
 
+import com.api.onboardingkit.article.entity.Category;
 import com.api.onboardingkit.article.repository.ArticleRepository;
+import com.api.onboardingkit.article.repository.CategoryRepository;
 import com.api.onboardingkit.checklist.entity.Checklist;
 import com.api.onboardingkit.checklist.repository.ChecklistItemRepository;
 import com.api.onboardingkit.checklist.repository.ChecklistRepository;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 public class MainService extends AbstractService {
 
     private final ArticleRepository articleRepository;
+    private final CategoryRepository categoryRepository;
     private final ChecklistRepository checklistRepository;
     private final ChecklistItemRepository checklistItemRepository;
 
@@ -75,15 +78,25 @@ public class MainService extends AbstractService {
 
     public List<MainArticleDTO> getMainArticles() {
         return articleRepository.findTop3ByOrderByViewsDesc().stream()
-                .map(article -> new MainArticleDTO(
-                        article.getTitle(),
-                        article.getSummary(),
-                        article.getThumbnail(),
-                        article.getUrl(),
-                        article.getViews(),
-                        article.getPostDate()
-                    )
-                )
+                .map(article -> {
+                    String categoryName = null;
+                    if (article.getCategoryId() != null) {
+                        categoryName = categoryRepository.findById(article.getCategoryId())
+                                .map(Category::getCategoryName)
+                                .orElse(null);
+                    }
+
+                    return new MainArticleDTO(
+                            article.getTitle(),
+                            article.getSummary(),
+                            article.getThumbnail(),
+                            article.getUrl(),
+                            article.getViews(),
+                            article.getSource(),
+                            categoryName,
+                            article.getPostDate()
+                    );
+                })
                 .collect(Collectors.toList());
     }
 }
