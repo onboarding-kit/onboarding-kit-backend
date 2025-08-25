@@ -80,7 +80,10 @@ public class MainService extends AbstractService {
                         article.getSummary(),
                         article.getThumbnail(),
                         article.getUrl(),
-                        article.getViews()))
+                        article.getViews(),
+                        article.getPostDate()
+                    )
+                )
                 .collect(Collectors.toList());
     }
 }
