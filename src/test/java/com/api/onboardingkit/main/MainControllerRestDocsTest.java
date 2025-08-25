@@ -159,6 +159,8 @@ public class MainControllerRestDocsTest {
                 "thumb.jpg",
                 "https://example.com",
                 456,
+                "https://example.com",
+                "백엔드",
                 LocalDateTime.parse("2024-03-01T10:00:00")
         );
 
@@ -177,6 +179,8 @@ public class MainControllerRestDocsTest {
                                 fieldWithPath("data[].thumbnail").description("썸네일 이미지 경로"),
                                 fieldWithPath("data[].url").description("링크 URL"),
                                 fieldWithPath("data[].views").description("조회수"),
+                                fieldWithPath("data[].source").description("출처"),
+                                fieldWithPath("data[].categoryName").description("키테고리"),
                                 fieldWithPath("data[].postDate").description("게시일")
                         )));
     }
