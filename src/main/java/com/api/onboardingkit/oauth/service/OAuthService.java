@@ -43,8 +43,8 @@ public class OAuthService extends AbstractService {
                 });
 
         // 응답할 JWT 토큰 발급
-        String accessToken = jwtTokenProvider.generateToken(String.valueOf(member.getId()));
-        String refreshToken = jwtTokenProvider.generateRefreshToken(String.valueOf(member.getId()));
+        String accessToken = jwtTokenProvider.generateToken(member.getId(), socialType);
+        String refreshToken = jwtTokenProvider.generateRefreshToken(member.getId(), socialType);
 
         member.setRefreshToken(refreshToken);
         memberRepository.save(member);
@@ -70,8 +70,8 @@ public class OAuthService extends AbstractService {
         }
 
         // 새 토큰 발급 및 저장
-        String newAccessToken = jwtTokenProvider.generateToken(String.valueOf(member.getId()));
-        String newRefreshToken = jwtTokenProvider.generateRefreshToken(String.valueOf(member.getId()));
+        String newAccessToken = jwtTokenProvider.generateToken(member.getId(), member.getSocialType());
+        String newRefreshToken = jwtTokenProvider.generateRefreshToken(member.getId(), member.getSocialType());
         member.setRefreshToken(newRefreshToken);
         memberRepository.save(member);
 
@@ -81,6 +81,7 @@ public class OAuthService extends AbstractService {
     @Transactional
     public void logout() {
         Long memberId = getMemberId();
+        System.out.println(memberId);
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOT_FOUND));
 
