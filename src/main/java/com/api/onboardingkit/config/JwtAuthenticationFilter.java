@@ -30,7 +30,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.startsWith("/onboardingkit/api/oauth") ||
+        return path.startsWith("/onboardingkit/api/oauth/login") ||
+                path.startsWith("/onboardingkit/api/oauth/reissue") ||
                 path.startsWith("/onboardingkit/api/h2") ||
                 path.startsWith("/onboardingkit/api/docs") ||
                 path.startsWith("/onboardingkit/api/swagger-ui") ||
@@ -82,16 +83,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Claims claims = jwtTokenProvider.parseClaims(token);
 
             // 사용자 인증 객체 생성
-            String phoneNum = claims.getSubject();
+            Long memberId = Long.valueOf(claims.getSubject());
             Collection<? extends GrantedAuthority> authorities =
                     List.of(new SimpleGrantedAuthority("ROLE_USER"));
 
             // Authentication 객체 생성 후 등록
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
-                            phoneNum,         // 전화번호
-                            claims,           // memberId
-                            authorities       // 권한
+                            memberId,
+                            claims,
+                            authorities
                     );
 
             SecurityContextHolder.getContext().setAuthentication(authentication);

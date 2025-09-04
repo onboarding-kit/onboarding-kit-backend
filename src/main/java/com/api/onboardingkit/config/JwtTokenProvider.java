@@ -2,6 +2,7 @@ package com.api.onboardingkit.config;
 
 import com.api.onboardingkit.config.exception.CustomException;
 import com.api.onboardingkit.config.exception.ErrorCode;
+import com.api.onboardingkit.member.entity.SocialType;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
@@ -39,22 +40,24 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret));
     }
 
-    public String generateToken(String memberId) {
-        return createToken(memberId, accessTokenExpiration);
+    public String generateToken(Long memberId, SocialType socialType) {
+        return createToken(memberId, socialType, accessTokenExpiration);
     }
 
-    public String generateRefreshToken(String memberId) {
-        return createToken(memberId, refreshTokenExpiration);
+    public String generateRefreshToken(Long memberId, SocialType socialType) {
+        return createToken(memberId, socialType, refreshTokenExpiration);
     }
 
-    private String createToken(String memberId, long expiration) {
+    private String createToken(Long memberId, SocialType socialType, long expiration) {
         return Jwts.builder()
-                .setSubject(memberId)
+                .setSubject(memberId.toString())
+                .claim("socialType", socialType.toString())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis()+expiration))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
+
 
     public boolean validateToken(String token) {
         try{
