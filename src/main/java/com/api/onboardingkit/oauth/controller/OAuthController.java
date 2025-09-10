@@ -32,14 +32,14 @@ public class OAuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<CustomResponse<Void>> logout() {
+    public ResponseEntity<CustomResponse<String>> logout() {
         oAuthService.logout();
-        return ResponseEntity.ok(CustomResponse.success(null, SuccessStatus.LOGOUT_OK));
+        return ResponseEntity.ok(CustomResponse.success("로그아웃 성공입니다.", SuccessStatus.LOGOUT_OK));
     }
 
     @DeleteMapping("/withdraw")
-    public ResponseEntity<CustomResponse<Void>> withdraw() {
+    public ResponseEntity<CustomResponse<String>> withdraw() {
         oAuthService.withdraw();
-        return ResponseEntity.ok(CustomResponse.success(null, SuccessStatus.MEMBER_WITHDRAW_OK));
+        return ResponseEntity.ok(CustomResponse.success("회원탈퇴 성공입니다.", SuccessStatus.MEMBER_WITHDRAW_OK));
     }
 }
