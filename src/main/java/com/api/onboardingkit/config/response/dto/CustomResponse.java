@@ -22,6 +22,10 @@ public class CustomResponse<T> {
         return new CustomResponse<>(status.getCode(), status.getMessage(), null);
     }
 
+    public static <T> CustomResponse<T> failure(T data, FailureStatus status) {
+        return new CustomResponse<>(status.getCode(), status.getMessage(), data);
+    }
+
     public static CustomResponse<Object> failure(ErrorCode errorCode) {
         return new CustomResponse<>(errorCode.getCode(), errorCode.getMessage(), null);
     }
@@ -29,4 +33,5 @@ public class CustomResponse<T> {
     public static CustomResponse<Object> failure(int code, String message) {
         return new CustomResponse<>(code, message, null);
     }
+
 }
