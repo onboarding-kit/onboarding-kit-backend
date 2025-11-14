@@ -1,7 +1,7 @@
 package com.api.onboardingkit.oauth.controller;
 
-import com.api.onboardingkit.config.AbstractService;
 import com.api.onboardingkit.config.response.dto.CustomResponse;
+import com.api.onboardingkit.config.response.dto.FailureStatus;
 import com.api.onboardingkit.config.response.dto.SuccessStatus;
 import com.api.onboardingkit.oauth.dto.OAuthRequestDto;
 import com.api.onboardingkit.oauth.dto.OAuthResponseDto;
@@ -32,14 +32,31 @@ public class OAuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<CustomResponse<String>> logout() {
-        oAuthService.logout();
-        return ResponseEntity.ok(CustomResponse.success("로그아웃 성공입니다.", SuccessStatus.LOGOUT_OK));
+    public ResponseEntity<CustomResponse<Object>> logout() {
+        try {
+            oAuthService.logout();
+            return ResponseEntity.ok(
+                    CustomResponse.success("로그아웃 성공입니다.", SuccessStatus.LOGOUT_OK)
+            );
+        } catch (Exception e) {
+            return ResponseEntity.ok(
+                    CustomResponse.failure("로그아웃 실패했습니다.", FailureStatus.LOGOUT_FAIL)
+            );
+        }
     }
 
     @DeleteMapping("/withdraw")
-    public ResponseEntity<CustomResponse<String>> withdraw() {
-        oAuthService.withdraw();
-        return ResponseEntity.ok(CustomResponse.success("회원탈퇴 성공입니다.", SuccessStatus.MEMBER_WITHDRAW_OK));
+    public ResponseEntity<CustomResponse<Object>> withdraw() {
+        try {
+            oAuthService.withdraw();
+            return ResponseEntity.ok(
+                    CustomResponse.success("회원탈퇴 성공입니다.", SuccessStatus.MEMBER_WITHDRAW_OK)
+            );
+        } catch (Exception e) {
+            return ResponseEntity.ok(
+                    CustomResponse.failure("회원탈퇴 실패했습니다.", FailureStatus.MEMBER_WITHDRAW_FAIL)
+            );
+        }
     }
+
 }
